@@ -1,7 +1,5 @@
 name: Create Release Tag
 description: Creates a release tag for the given packageID
-on:
-  workflow_call:
 inputs:
   packageID:
     description: PackageID of the package.json
