@@ -1,5 +1,7 @@
 name: Create Release Tag
 description: Creates a release tag for the given packageID
+on:
+  workflow_call:
 inputs:
   packageID:
     description: PackageID of the package.json
@@ -13,7 +15,7 @@ outputs:
     description: The generated release tag of the package.json
     value: ${{ steps.tag.outputs.prop }}
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: get version
       id: version
