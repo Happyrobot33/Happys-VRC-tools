@@ -25,7 +25,7 @@ jobs:
 
       - name: Create Release Tag
         id: createReleaseTag
-        uses: ./.github/workflows/utils/create-release-tag.yml
+        uses: ./.github/workflows/create-release-tag/action.yml
         with:
           packageID: ${{ matrix.packageID }}
       
@@ -68,7 +68,7 @@ jobs:
     
       - name: Create Release Tag
         id: createReleaseTag
-        uses: ./.github/workflows/utils/create-release-tag.yml
+        uses: ./.github/workflows/create-release-tag/action.yml
         with:
           packageID: ${{ matrix.packageID }}
 
