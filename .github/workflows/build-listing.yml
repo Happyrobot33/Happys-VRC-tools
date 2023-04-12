@@ -25,7 +25,7 @@ env:
   pathToCi: ci
   PackageListingSuffix: Repo
   CurrentPackageName: com.happyrobot33.packagewindowconsolidator
-  ListingUrl: http://www.matthewherber.com/Happys-VRC-tools/index.json
+  ListingUrl: "http://www.matthewherber.com/Happys-VRC-tools/index.json"
 
 jobs:
   
