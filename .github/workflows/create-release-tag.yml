@@ -16,23 +16,23 @@ runs:
   using: "composite"
   steps:
     - name: get version
-        id: version
-        uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
-        with: 
-            path: "Packages/${{inputs.packageID}}/package.json"
-            prop_path: "version"
-      
-      - name: get name
-        id: name
-        uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
-        with: 
-            path: "Packages/${{inputs.packageID}}/package.json"
-            prop_path: "displayName"
-      
-      - name: sanitize name
-        id: sanitizeName
-        run: echo prop=$(echo '${{ steps.name.outputs.prop }}' | tr ' ' '_') >> $GITHUB_OUTPUT
-      
-      - name: generate tag
-        id: tag
-        run: echo prop="${{ steps.sanitizeName.outputs.prop }}-${{ steps.version.outputs.prop }}" >> $GITHUB_OUTPUT
+      id: version
+      uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
+      with: 
+          path: "Packages/${{inputs.packageID}}/package.json"
+          prop_path: "version"
+    
+    - name: get name
+      id: name
+      uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
+      with: 
+          path: "Packages/${{inputs.packageID}}/package.json"
+          prop_path: "displayName"
+    
+    - name: sanitize name
+      id: sanitizeName
+      run: echo prop=$(echo '${{ steps.name.outputs.prop }}' | tr ' ' '_') >> $GITHUB_OUTPUT
+    
+    - name: generate tag
+      id: tag
+      run: echo prop="${{ steps.sanitizeName.outputs.prop }}-${{ steps.version.outputs.prop }}" >> $GITHUB_OUTPUT
