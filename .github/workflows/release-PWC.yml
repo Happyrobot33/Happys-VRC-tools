@@ -1,13 +1,10 @@
-name: Build Release
+name: Build Release (Package Window Consolidator)
 
 on: 
   workflow_dispatch:
-  push:
-    branches: main
-    paths: Packages/com.vrchat.demo-template/**
 
 env:
-  packageName: "com.vrchat.demo-template"
+  packageName: "com.happyrobot33.packagewindowconsolidator"
 
 permissions:
   contents: write
