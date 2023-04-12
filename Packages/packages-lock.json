@@ -168,16 +168,8 @@
         "com.unity.textmeshpro": "2.1.6"
       }
     },
-    "dev.onevr.vrworldtoolkit": {
-      "version": "file:dev.onevr.vrworldtoolkit",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.postprocessing": "3.1.1"
-      }
-    },
-    "vrchat.jordo.easyquestswitch": {
-      "version": "file:vrchat.jordo.easyquestswitch",
+    "test.example.package": {
+      "version": "file:test.example.package",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}

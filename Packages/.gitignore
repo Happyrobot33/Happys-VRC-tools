@@ -2,4 +2,5 @@
 
 !com.vrchat.core.*
 !com.happyrobot33.*
+!test.*
 !com.vrchat.core.*/
