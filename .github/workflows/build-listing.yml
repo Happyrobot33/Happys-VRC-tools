@@ -25,7 +25,6 @@ env:
   pathToCi: ci
   PackageListingSuffix: Repo
   CurrentPackageName: com.happyrobot33.packagewindowconsolidator
-  ListingUrl: "http://www.matthewherber.com/Happys-VRC-tools/index.json"
 
 jobs:
   
@@ -54,7 +53,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
           
       - name: Build Package Version Listing
-        run: ${{env.pathToCi}}/build.cmd BuildRepoListing --root ${{env.pathToCi}} --list-publish-directory $GITHUB_WORKSPACE/${{env.listPublishDirectory}} --current-package-name ${{env.CurrentPackageName}} --package-listing-suffix ${{env.PackageListingSuffix}} --current-listing-url ${{env.ListingUrl}}
+        run: ${{env.pathToCi}}/build.cmd BuildRepoListing --root ${{env.pathToCi}} --list-publish-directory $GITHUB_WORKSPACE/${{env.listPublishDirectory}} --current-package-name ${{env.CurrentPackageName}} --package-listing-suffix ${{env.PackageListingSuffix}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
