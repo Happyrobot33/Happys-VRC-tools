@@ -1,0 +1,10 @@
+{
+    "name":"Happyrobot33's VRC Tools",
+    "id":"com.happyrobot33.vrctools",
+    "url":"https://www.matthewherber.com/Happys-VRC-tools/index.json",
+    "author":{
+        "name":"Happyrobot33"
+    },
+    "description":"A collection of tools for VRChat",
+    "bannerUrl":"banner.png"
+}
