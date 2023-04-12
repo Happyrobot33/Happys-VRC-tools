@@ -8,6 +8,8 @@ on:
       - completed
   push:
     branches: [main]
+  release:
+     types: [published, edited, created, unpublished, deleted, released]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
