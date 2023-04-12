@@ -24,6 +24,7 @@ env:
   listPublishDirectory: Website
   pathToCi: ci
   PackageListingSuffix: Repo
+  CurrentPackageName: com.happyrobot33.packagewindowconsolidator
 
 jobs:
   
