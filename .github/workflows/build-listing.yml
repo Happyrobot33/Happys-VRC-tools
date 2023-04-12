@@ -24,6 +24,7 @@ env:
   listPublishDirectory: Website
   pathToCi: ci
   PackageListingSuffix: Repo
+  indexLocation: "https://www.matthewherber.com/Happys-VRC-tools/index.json"
 
 jobs:
   
@@ -52,7 +53,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
           
       - name: Build Package Version Listing
-        run: ${{env.pathToCi}}/build.cmd BuildRepoListing --root ${{env.pathToCi}} --list-publish-directory $GITHUB_WORKSPACE/${{env.listPublishDirectory}} --package-listing-suffix ${{env.PackageListingSuffix}}
+        run: ${{env.pathToCi}}/build.cmd BuildMultiPackageListing --root ${{env.pathToCi}} --list-publish-directory $GITHUB_WORKSPACE/${{env.listPublishDirectory}} --package-listing-suffix ${{env.PackageListingSuffix}} --current-listing-url ${{env.indexLocation}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
