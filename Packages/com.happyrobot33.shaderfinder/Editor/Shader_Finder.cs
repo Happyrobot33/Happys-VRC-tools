@@ -36,6 +36,12 @@ public class Shader_Finder : EditorWindow
         GUILayout.Label("This tool will find all the shaders in the scene, and select the relevant gameobjects. If you are using a shader that locks itself into a 'optimized' mode, then you will need to search for it under Hidden, IE for Poiyomi it will be under Hidden -> Locked", EditorStyles.wordWrappedLabel);
         //create a new dropdown menu
         index = EditorGUILayout.Popup(index, shaderNameList);
+        //create a button that will refresh the shader list
+        if(GUILayout.Button("Refresh Shader List")){
+            //clear the list
+            shaderList = new Shader[0];
+            shaderNameList = new string[0];
+        }
 
         //find every shader in the project and add it to the list
         if (shaderList.Length == 0)
@@ -132,6 +138,51 @@ public class Shader_Finder : EditorWindow
                                 //select the object
                                 Selection.objects = addToArray(Selection.objects, obj);
                             }
+                        }
+                    }
+                    else if (obj.GetComponent<ParticleSystemRenderer>() != null)
+                    {
+                        //check if the object has the selected shader
+                        if (obj.GetComponent<ParticleSystemRenderer>().sharedMaterial.shader == shaderList[index])
+                        {
+                            //select the object
+                            Selection.objects = addToArray(Selection.objects, obj);
+                        }
+                    }
+                    else if (obj.GetComponent<TrailRenderer>() != null)
+                    {
+                        //check if the object has the selected shader
+                        if (obj.GetComponent<TrailRenderer>().sharedMaterial.shader == shaderList[index])
+                        {
+                            //select the object
+                            Selection.objects = addToArray(Selection.objects, obj);
+                        }
+                    }
+                    else if (obj.GetComponent<LineRenderer>() != null)
+                    {
+                        //check if the object has the selected shader
+                        if (obj.GetComponent<LineRenderer>().sharedMaterial.shader == shaderList[index])
+                        {
+                            //select the object
+                            Selection.objects = addToArray(Selection.objects, obj);
+                        }
+                    }
+                    else if (obj.GetComponent<Image>() != null)
+                    {
+                        //check if the object has the selected shader
+                        if (obj.GetComponent<Image>().material.shader == shaderList[index])
+                        {
+                            //select the object
+                            Selection.objects = addToArray(Selection.objects, obj);
+                        }
+                    }
+                    else if (obj.GetComponent<Text>() != null)
+                    {
+                        //check if the object has the selected shader
+                        if (obj.GetComponent<Text>().material.shader == shaderList[index])
+                        {
+                            //select the object
+                            Selection.objects = addToArray(Selection.objects, obj);
                         }
                     }
                 }

@@ -140,7 +140,7 @@ public class PackageWindowConsolidator : MonoBehaviour
     //as long as the menu item is either at the top level or is in Window, we can move it
     public static bool IsMenuItemMovable(string line)
     {
-        string[] blockedTabs = new string[] { "File", "Edit", "GameObject", "Component", "Assets", "Help", "VRChat SDK" };
+        string[] blockedTabs = new string[] { "File", "Edit", "Assets", "GameObject", "Component", "VRChat SDK", "Help", "Jobs" };
 
         foreach (string tab in blockedTabs)
         {
