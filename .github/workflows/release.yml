@@ -31,7 +31,7 @@ jobs:
         uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
         with: 
             path: "Packages/${{matrix.packageID}}/package.json"
-            prop_path: "name"
+            prop_path: "displayName"
     
       - name: Set Environment Variables
         run: |
@@ -62,7 +62,7 @@ jobs:
       - name: Make Release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
         with:
-          tag_name: "${{ steps.name.outputs.prop }} ${{ steps.version.outputs.prop }}"
+          tag_name: "${{ steps.name.outputs.prop | replace(' ', '') }}-${{ steps.version.outputs.prop }}"
           files: |
             ${{ env.zipFile }}
             ${{ env.unityPackage }}
