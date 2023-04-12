@@ -5,42 +5,77 @@ on:
 
 env:
   releaseTemplate: "RELEASE TEMPLATE.md"
+  packages: [com.happyrobot33.packagewindowconsolidator, com.happyrobot33.placeholder]
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  #this job checks every package to see if that package should have a release candidate
+  check:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        packageID: [com.happyrobot33.packagewindowconsolidator, com.happyrobot33.placeholder]
+        packageID: ${{ env.packages }}
+    outputs:
+      ${{ matrix.packageID }}: ${{ steps.tagExists.outputs.exists }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create Release Tag
+        id: createReleaseTag
+        uses: ./.github/workflows/create-release-tag.yml
+        with:
+          packageID: ${{ matrix.packageID }}
+      
+      - name: Check if Release Tag Exists
+        uses: mukunku/tag-exists-action@v1.2.0
+        id: tagExists
+        with:
+          tag: ${{ steps.createReleaseTag.outputs.tag }}
+      
+  #this job combines all of the checked packages into a single list of packageIDs that should have a release candidate made
+  combine:
+    needs: check
+    runs-on: ubuntu-latest
+    outputs:
+      packageIDList: ${{ steps.combine.outputs.packages }}
+    steps:
+      - name: Combine Packages
+        id: combine
+        run: |
+          packages=""
+          for packageID in ${{ env.packages }}
+          do
+            if [ ${{ needs.check.outputs.${{ packageID }} }} == "true" ]
+            then
+              packages="$packages $packageID"
+            fi
+          done
+          echo "packages=$packages" >> $GITHUB_ENV
+
+  #this job builds every packageID it is given
+  build:
+    needs: combine
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        packageID: ${{ fromJson(needs.combine.outputs.packageIDList) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
     
-      - name: get version
-        id: version
-        uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
-        with: 
-            path: "Packages/${{matrix.packageID}}/package.json"
-            prop_path: "version"
-      
-      - name: get name
-        id: name
-        uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
-        with: 
-            path: "Packages/${{matrix.packageID}}/package.json"
-            prop_path: "displayName"
-      
-      - name: sanitize name
-        id: sanitizeName
-        run: echo prop=$(echo '${{ steps.name.outputs.prop }}' | tr ' ' '_') >> $GITHUB_OUTPUT
-    
+      - name: Create Release Tag
+        id: createReleaseTag
+        uses: ./.github/workflows/create-release-tag.yml
+        with:
+          packageID: ${{ matrix.packageID }}
+
       - name: Set Environment Variables
         run: |
-          echo "zipFile=${{ matrix.packageID }}-${{ steps.version.outputs.prop }}".zip >> $GITHUB_ENV
-          echo "unityPackage=${{ matrix.packageID }}-${{ steps.version.outputs.prop }}.unitypackage" >> $GITHUB_ENV
+          echo "zipFile=${{ matrix.packageID }}-${{ steps.createReleaseTag.outputs.version }}".zip >> $GITHUB_ENV
+          echo "unityPackage=${{ matrix.packageID }}-${{ steps.createReleaseTag.outputs.version }}.unitypackage" >> $GITHUB_ENV
         
       - name: Create Zip
         uses: thedoctor0/zip-release@09336613be18a8208dfa66bd57efafd9e2685657
@@ -66,7 +101,7 @@ jobs:
       - name: Make Release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
         with:
-          tag_name: "${{ steps.sanitizeName.outputs.prop }}-${{ steps.version.outputs.prop }}"
+          tag_name: ${{ steps.createReleaseTag.outputs.tag }}
           files: |
             ${{ env.zipFile }}
             ${{ env.unityPackage }}
