@@ -6,5 +6,8 @@
         "name":"Happyrobot33"
     },
     "description":"A collection of tools for VRChat",
-    "bannerUrl":"banner.png"
+    "bannerUrl":"banner.png",
+    "githubRepos": [
+        "happyrobot33/Happys-VRC-tools"
+    ]
 }
