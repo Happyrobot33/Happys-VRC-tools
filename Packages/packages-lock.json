@@ -1,7 +1,25 @@
 {
   "dependencies": {
+    "com.happyrobot33.editorgames": {
+      "version": "file:com.happyrobot33.editorgames",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.happyrobot33.inspectortweaks": {
+      "version": "file:com.happyrobot33.inspectortweaks",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.happyrobot33.packagewindowconsolidator": {
       "version": "file:com.happyrobot33.packagewindowconsolidator",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.happyrobot33.shaderfinder": {
+      "version": "file:com.happyrobot33.shaderfinder",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
@@ -167,12 +185,6 @@
         "com.unity.postprocessing": "3.1.1",
         "com.unity.textmeshpro": "2.1.6"
       }
-    },
-    "test.example.package": {
-      "version": "file:test.example.package",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
