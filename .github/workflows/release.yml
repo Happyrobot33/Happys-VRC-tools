@@ -10,58 +10,11 @@ permissions:
   contents: write
 
 jobs:
-  #this job checks every package to see if that package should have a release candidate
-  check:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         packageID: [com.happyrobot33.packagewindowconsolidator, com.happyrobot33.placeholder]
-    outputs:
-      packageIDList: ${{ toJson(matrix.packageID) }}
-      ${{ matrix.packageID }}: ${{ steps.tagExists.outputs.exists }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Create Release Tag
-        id: createReleaseTag
-        uses: ./.github/workflows/create-release-tag/action.yml
-        with:
-          packageID: ${{ matrix.packageID }}
-      
-      - name: Check if Release Tag Exists
-        uses: mukunku/tag-exists-action@v1.2.0
-        id: tagExists
-        with:
-          tag: ${{ steps.createReleaseTag.outputs.tag }}
-      
-  #this job combines all of the checked packages into a single list of packageIDs that should have a release candidate made
-  combine:
-    needs: check
-    runs-on: ubuntu-latest
-    outputs:
-      packageIDList: ${{ steps.combine.outputs.packages }}
-    steps:
-      - name: Combine Packages
-        id: combine
-        run: |
-          packages=""
-          for packageID in ${{ fromJson(needs.check.outputs.packageIDList) }}
-          do
-            if [ ${{ needs.check.outputs.${{ packageID }} }} == "true" ]
-            then
-              packages="$packages $packageID"
-            fi
-          done
-          echo "packages=$packages" >> $GITHUB_ENV
-
-  #this job builds every packageID it is given
-  build:
-    needs: combine
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        packageID: ${{ fromJson(needs.combine.outputs.packageIDList) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -71,6 +24,12 @@ jobs:
         uses: ./.github/workflows/create-release-tag/action.yml
         with:
           packageID: ${{ matrix.packageID }}
+      
+      - name: Check if Release Tag Exists
+        id: checkReleaseTag
+        uses: mukunku/tag-exists-action@v1.2.0
+        with:
+          tag: ${{ steps.createReleaseTag.outputs.tag }}
 
       - name: Set Environment Variables
         run: |
@@ -99,6 +58,7 @@ jobs:
           path: "./${{ env.releaseTemplate }}"
         
       - name: Make Release
+        if: ${{ steps.checkReleaseTag.outputs.exists == 'false' }}
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
         with:
           tag_name: ${{ steps.createReleaseTag.outputs.tag }}
