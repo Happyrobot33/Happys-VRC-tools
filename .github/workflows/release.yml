@@ -21,7 +21,7 @@ jobs:
     
       - name: Create Release Tag
         id: createReleaseTag
-        uses: workflows/create-release-tag/action.yml
+        uses: /workflows/create-release-tag/action.yml
         with:
           packageID: ${{ matrix.packageID }}
       
