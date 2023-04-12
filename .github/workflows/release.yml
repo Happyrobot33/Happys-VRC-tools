@@ -5,7 +5,7 @@ on:
 
 env:
   releaseTemplate: "RELEASE TEMPLATE.md"
-  packages: ["com.happyrobot33.packagewindowconsolidator", "com.happyrobot33.placeholder"]
+  packages: ("com.happyrobot33.packagewindowconsolidator" "com.happyrobot33.placeholder")
 
 permissions:
   contents: write
