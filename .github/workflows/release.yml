@@ -35,7 +35,7 @@ jobs:
       
       - name: sanitize name
         id: sanitizeName
-        run: echo "prop=$(echo '${{ steps.name.outputs.prop }}' | tr ' ' '_')" >> $GITHUB_ENV
+        run: echo prop=$(echo '${{ steps.name.outputs.prop }}' | tr ' ' '_') >> $GITHUB_ENV
     
       - name: Set Environment Variables
         run: |
