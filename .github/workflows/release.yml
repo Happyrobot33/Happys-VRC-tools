@@ -32,6 +32,11 @@ jobs:
         with: 
             path: "Packages/${{matrix.packageID}}/package.json"
             prop_path: "displayName"
+      
+      - name: sanitize name
+        id: sanitizeName
+        run: |
+          echo "prop=${{ steps.name.outputs.prop | replace(' ', '_') }}" >> $GITHUB_ENV
     
       - name: Set Environment Variables
         run: |
@@ -62,7 +67,7 @@ jobs:
       - name: Make Release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
         with:
-          tag_name: "${{ steps.name.outputs.prop | replace(' ', '') }}-${{ steps.version.outputs.prop }}"
+          tag_name: "${{ steps.sanitizeName.outputs.prop }}-${{ steps.version.outputs.prop }}"
           files: |
             ${{ env.zipFile }}
             ${{ env.unityPackage }}
