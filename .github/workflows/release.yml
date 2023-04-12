@@ -49,8 +49,8 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          echo "zipFile=${{ matrix.packageID }}-${{ steps.createReleaseTag.outputs.version }}".zip >> $GITHUB_ENV
-          echo "unityPackage=${{ matrix.packageID }}-${{ steps.createReleaseTag.outputs.version }}.unitypackage" >> $GITHUB_ENV
+          echo "zipFile=${{ matrix.packageID }}-${{ steps.tag.outputs.prop }}".zip >> $GITHUB_ENV
+          echo "unityPackage=${{ matrix.packageID }}-${{ steps.tag.outputs.prop }}.unitypackage" >> $GITHUB_ENV
         
       - name: Create Zip
         uses: thedoctor0/zip-release@09336613be18a8208dfa66bd57efafd9e2685657
@@ -77,7 +77,7 @@ jobs:
         if: ${{ steps.checkReleaseTag.outputs.exists == 'false' }}
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
         with:
-          tag_name: ${{ steps.createReleaseTag.outputs.tag }}
+          tag_name: ${{ steps.tag.outputs.prop }}
           files: |
             ${{ env.zipFile }}
             ${{ env.unityPackage }}
