@@ -105,6 +105,10 @@ public class PackageWindowConsolidator : MonoBehaviour
                             {
                                 File.WriteAllText(file, File.ReadAllText(file).Replace("[MenuItem(\"Window/", "[MenuItem(\"VRC Packages/"));
                             }
+                            else if (line.Contains("[MenuItem(\"Tools/"))
+                            {
+                                File.WriteAllText(file, File.ReadAllText(file).Replace("[MenuItem(\"Tools/", "[MenuItem(\"VRC Packages/"));
+                            }
                             else if (IsMenuItemMovable(line)) //make sure the menu item is not in some of the other dropdowns
                             {
                                 //get the path of the MenuItem
