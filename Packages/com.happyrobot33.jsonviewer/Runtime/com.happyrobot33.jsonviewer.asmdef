@@ -1,0 +1,24 @@
+{
+    "name": "com.happyrobot33.jsonviewer",
+    "references": [
+        "VRC.SDK3",
+        "VRC.SDKBase",
+        "UdonSharp.Runtime",
+        "Koyashiro.UdonJson",
+        "Unity.TextMeshPro",
+        "VRC.Udon",
+        "VRC.Udon.Serialization.OdinSerializer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UDONSHARP",
+        "UDON"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
