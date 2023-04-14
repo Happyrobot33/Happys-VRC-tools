@@ -13,7 +13,7 @@
       "dependencies": {}
     },
     "com.happyrobot33.jsonviewer": {
-      "version": "file:com.happyrobot33.jsonviewer",
+      "version": "file:dev.happyrobot33.jsonviewer",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
