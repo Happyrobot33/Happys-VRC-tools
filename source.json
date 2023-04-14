@@ -8,6 +8,7 @@
     "description":"A collection of tools for VRChat",
     "bannerUrl":"banner.png",
     "githubRepos": [
-        "happyrobot33/Happys-VRC-tools"
+        "happyrobot33/Happys-VRC-tools",
+        "Mattshark89/OpenFlight-VRC"
     ]
 }
