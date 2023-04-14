@@ -1,7 +1,7 @@
 {
   "name": "com.happyrobot33.editorgames",
   "displayName": "Editor Games",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "unity": "2019.4",
   "description": "This is a collection of games that I have made that run in the Unity Editor itself",
   "author": {

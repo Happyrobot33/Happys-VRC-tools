@@ -1,7 +1,7 @@
 {
   "name": "com.happyrobot33.inspectortweaks",
   "displayName": "Inspector Tweaks",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "unity": "2019.4",
   "description": "Collection of tweaks to various Unity inspectors to improve workflows",
   "author": {
