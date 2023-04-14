@@ -1,5 +1,5 @@
 {
-    "name": "InspectorTweaks",
+    "name": "com.happyrobot33.inspectortweaks.editor",
     "references": [],
     "includePlatforms": [
         "Editor"

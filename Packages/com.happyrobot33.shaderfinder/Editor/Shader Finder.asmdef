@@ -1,5 +1,5 @@
 {
-    "name": "ShaderFinder",
+    "name": "com.happyrobot33.shaderfinder.editor",
     "references": [],
     "includePlatforms": [
         "Editor"

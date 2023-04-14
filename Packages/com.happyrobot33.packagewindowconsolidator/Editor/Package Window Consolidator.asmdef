@@ -1,5 +1,5 @@
 {
-    "name": "PackageWindowConsolidator",
+    "name": "com.happyrobot33.packagewindowconsolidator.editor",
     "references": [],
     "includePlatforms": [
         "Editor"
