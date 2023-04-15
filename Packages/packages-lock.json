@@ -12,19 +12,19 @@
       "source": "embedded",
       "dependencies": {}
     },
-    "com.happyrobot33.jsonviewer": {
-      "version": "file:dev.happyrobot33.jsonviewer",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.textmeshpro": "2.1.6"
-      }
-    },
     "com.happyrobot33.packagewindowconsolidator": {
       "version": "file:com.happyrobot33.packagewindowconsolidator",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
+    },
+    "com.happyrobot33.prettyjsonui": {
+      "version": "file:com.happyrobot33.prettyjsonui",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.textmeshpro": "2.1.6"
+      }
     },
     "com.happyrobot33.shaderfinder": {
       "version": "file:com.happyrobot33.shaderfinder",

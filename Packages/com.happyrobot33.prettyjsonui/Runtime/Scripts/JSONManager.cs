@@ -12,7 +12,6 @@ public class JSONManager : UdonSharpBehaviour
     public float indentSpacing = 0.1f;
     public string stringSource = "";
     public TextAsset textAssetSource;
-
     public GameObject keyValuePairPrefab;
 
     void Start()
@@ -27,7 +26,6 @@ public class JSONManager : UdonSharpBehaviour
         }
 
         initializeHierarchy(json);
-        Debug.Log("Done initializing hierarchy");
     }
 
     // Recursive function to create the hierarchy system
@@ -53,6 +51,17 @@ public class JSONManager : UdonSharpBehaviour
             switch (curJson.GetValue(key).GetKind())
             {
                 case UdonJsonValueKind.Array:
+                    string arrayString = "";
+                    for (int i = 0; i < curJson.GetValue(key).Count(); i++)
+                    {
+                        UdonJsonValue element = curJson.GetValue(key).GetValue(i);
+                        arrayString += element.AsString();
+                        if (i != curJson.GetValue(key).Count() - 1)
+                        {
+                            arrayString += ", ";
+                        }
+                    }
+                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = key + " [" + arrayString + "] ";
                     break;
                 case UdonJsonValueKind.String:
                     obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = key + ": " + curJson.GetValue(key).AsString();

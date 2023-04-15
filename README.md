@@ -48,3 +48,8 @@ This package aims to improve the inspectors of different components in the Unity
 
 This tool will find all the shaders in the scene, and select the relevant gameobjects that have materials using those shaders. If you are using a shader that locks itself into a 'optimized' mode, then you will need to search for it under Hidden, IE for Poiyomi it will be under Hidden -> Locked. Works with particle systems as well
 </details>
+<details>
+<summary>Pretty JSON UI</summary>
+
+This is a small UI helper element that will display JSON in a dropdown like format, akin to this website [JSON Viewer](https://codebeautify.org/jsonviewer). Still kind of in development
+</details>
