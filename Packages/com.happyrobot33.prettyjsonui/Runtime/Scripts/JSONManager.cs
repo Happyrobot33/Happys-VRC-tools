@@ -1,5 +1,4 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -10,8 +9,47 @@ public class JSONManager : UdonSharpBehaviour
     UdonJsonValue json;
     public int depthLimit = 10;
     public float indentSpacing = 0.1f;
-    public string stringSource = "";
-    public TextAsset textAssetSource;
+
+    [FieldChangeCallback(nameof(stringSource))]
+    public string _stringSource = "";
+
+    [FieldChangeCallback(nameof(textAssetSource))]
+    public TextAsset _textAssetSource;
+    public string stringSource
+    {
+        set
+        {
+            _stringSource = value;
+            // Clear the hierarchy
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            SetJson(value);
+
+            initializeHierarchy(json);
+        }
+        get { return _stringSource; }
+    }
+
+    public TextAsset textAssetSource
+    {
+        set
+        {
+            _textAssetSource = value;
+            // Clear the hierarchy
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            SetJson(value);
+
+            initializeHierarchy(json);
+        }
+        get { return _textAssetSource; }
+    }
     public GameObject keyValuePairPrefab;
 
     void Start()
@@ -30,7 +68,11 @@ public class JSONManager : UdonSharpBehaviour
 
     // Recursive function to create the hierarchy system
     [RecursiveMethod]
-    public void initializeHierarchy(UdonJsonValue curJson, GameObject root = null, int currentDepth = 0)
+    public void initializeHierarchy(
+        UdonJsonValue curJson,
+        GameObject root = null,
+        int currentDepth = 0
+    )
     {
         if (currentDepth > depthLimit)
         {
@@ -61,23 +103,29 @@ public class JSONManager : UdonSharpBehaviour
                             arrayString += ", ";
                         }
                     }
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = key + " [" + arrayString + "] ";
+                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                        key + " [" + arrayString + "] ";
                     break;
                 case UdonJsonValueKind.String:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = key + ": " + curJson.GetValue(key).AsString();
+                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                        key + ": " + curJson.GetValue(key).AsString();
                     break;
                 case UdonJsonValueKind.Number:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = key + ": " + curJson.GetValue(key).AsNumber();
+                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                        key + ": " + curJson.GetValue(key).AsNumber();
                     break;
                 case UdonJsonValueKind.True:
                 case UdonJsonValueKind.False:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = key + ": " + curJson.GetValue(key).AsBool();
+                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                        key + ": " + curJson.GetValue(key).AsBool();
                     break;
                 case UdonJsonValueKind.Null:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = key + ": " + curJson.GetValue(key).AsNull();
+                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                        key + ": " + curJson.GetValue(key).AsNull();
                     break;
                 case UdonJsonValueKind.Object:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = key + " {" + curJson.GetValue(key).Keys().Length + "}";
+                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                        key + " {" + curJson.GetValue(key).Keys().Length + "}";
                     initializeHierarchy(curJson.GetValue(key), obj, currentDepth + 1);
                     break;
                 default:
@@ -91,12 +139,12 @@ public class JSONManager : UdonSharpBehaviour
         }
     }
 
-    public void SetJson(string json)
+    void SetJson(string json)
     {
         var result = UdonJsonDeserializer.TryDeserialize(json, out this.json);
     }
 
-    public void SetJson(TextAsset textAsset)
+    void SetJson(TextAsset textAsset)
     {
         SetJson(textAsset.text);
     }

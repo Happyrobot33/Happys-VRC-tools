@@ -5,6 +5,9 @@
     },
     "net.koyashiro.udonjson": {
       "version": "0.12.0"
+    },
+    "com.vrchat.clientsim": {
+      "version": "1.2.2"
     }
   },
   "locked": {
@@ -47,6 +50,12 @@
       "version": "0.14.2",
       "dependencies": {
         "com.vrchat.udonsharp": "1.1.7"
+      }
+    },
+    "com.vrchat.clientsim": {
+      "version": "1.2.2",
+      "dependencies": {
+        "com.vrchat.worlds": "3.1.x"
       }
     }
   }
