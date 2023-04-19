@@ -51,5 +51,5 @@ This tool will find all the shaders in the scene, and select the relevant gameob
 <details>
 <summary>Pretty JSON UI</summary>
 
-This is a small UI helper element that will display JSON in a dropdown like format, akin to this website [JSON Viewer](https://codebeautify.org/jsonviewer). Still kind of in development
+This is a small UI helper element that will display JSON in a dropdown like format, akin to this website [JSON Viewer](https://codebeautify.org/jsonviewer). Go into the VRC Packages dropdown and inside you will find two prefabs. the JSON Manager prefab just spits out the expandable format, while the JSON Scrollable puts the whole thing into a scrolling section that will have scrollbars so you can keep the content size consistent
 </details>

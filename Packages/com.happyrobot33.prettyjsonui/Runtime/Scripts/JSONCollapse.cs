@@ -1,5 +1,4 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -10,6 +9,7 @@ public class JSONCollapse : UdonSharpBehaviour
 {
     bool isCollapsed = false;
     RectTransform rectTransform;
+
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -50,7 +50,11 @@ public class JSONCollapse : UdonSharpBehaviour
             {
                 //if the child is not the parent, then we can hide it
                 //also make sure that its only the first depth of children that we hide
-                if (child.gameObject != parent && child.gameObject != gameObject && child.gameObject.transform.parent == parent.transform)
+                if (
+                    child.gameObject != parent
+                    && child.gameObject != gameObject
+                    && child.gameObject.transform.parent == parent.transform
+                )
                 {
                     child.gameObject.SetActive(false);
                 }
@@ -68,7 +72,10 @@ public class JSONCollapse : UdonSharpBehaviour
             {
                 //if the child is not the parent, then we can show it
                 //also make sure that its only the first depth of children that we show
-                if (child.gameObject != parent && child.gameObject.transform.parent == parent.transform)
+                if (
+                    child.gameObject != parent
+                    && child.gameObject.transform.parent == parent.transform
+                )
                 {
                     child.gameObject.SetActive(true);
                 }
