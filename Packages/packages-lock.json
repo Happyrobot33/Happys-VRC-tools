@@ -12,6 +12,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.happyrobot33.lightprobepopulator": {
+      "version": "file:com.happyrobot33.lightprobepopulator",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.happyrobot33.packagewindowconsolidator": {
       "version": "file:com.happyrobot33.packagewindowconsolidator",
       "depth": 0,
