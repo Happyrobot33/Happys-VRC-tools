@@ -53,3 +53,8 @@ This tool will find all the shaders in the scene, and select the relevant gameob
 
 This is a small UI helper element that will display JSON in a dropdown like format, akin to this website [JSON Viewer](https://codebeautify.org/jsonviewer). Go into the VRC Packages dropdown and inside you will find two prefabs. the JSON Manager prefab just spits out the expandable format, while the JSON Scrollable puts the whole thing into a scrolling section that will have scrollbars so you can keep the content size consistent
 </details>
+<details>
+<summary>Light Probe Generator</summary>
+
+This is a editor utility that will automatically create a light probe group and add light probe points to all relevant static game objects, along with adding points for spot, point and area lights. This is a improved version of [alexismorin's Light Probe Populator](https://github.com/alexismorin/Light-Probe-Populator), which took a slightly more primitive approach. You will find the control window in the VRC Packages tab in unity.
+</details>
