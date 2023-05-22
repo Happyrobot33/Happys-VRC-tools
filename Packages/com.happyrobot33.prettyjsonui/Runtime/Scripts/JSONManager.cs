@@ -2,11 +2,46 @@
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
-using Koyashiro.UdonJson;
+using VRC.SDK3.Data;
+using System.Reflection;
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.Callbacks;
+using UdonSharpEditor;
+
+//display a enum dropdown for all the public variables on the udonbehaviour script if it is attached
+[CustomEditor(typeof(JSONManager))]
+public class JSONManagerInspector : Editor {
+    int selectedVariable = 0;
+    public override void OnInspectorGUI() {
+        JSONManager jsonManager = (JSONManager)target;
+        if (UdonSharpGUI.DrawDefaultUdonSharpBehaviourHeader(target)) return;
+        DrawDefaultInspector();
+        if (jsonManager.watchBehaviour != null) {
+            FieldInfo[] fields = jsonManager.watchBehaviour.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+            string[] variables = new string[fields.Length];
+            for (int i = 0; i < fields.Length; i++) {
+                variables[i] = fields[i].Name;
+            }
+            //find our current variable index
+            for (int i = 0; i < variables.Length; i++) {
+                if (variables[i] == jsonManager.watchVariable) {
+                    selectedVariable = i;
+                    break;
+                }
+            }
+
+            selectedVariable = EditorGUILayout.Popup("Watch Variable", selectedVariable, variables);
+            jsonManager.watchVariable = variables[selectedVariable];
+        }
+    }
+}
+#endif
 
 public class JSONManager : UdonSharpBehaviour
 {
-    UdonJsonValue json;
+    DataDictionary json;
     public int depthLimit = 10;
     public float indentSpacing = 0.1f;
 
@@ -15,6 +50,10 @@ public class JSONManager : UdonSharpBehaviour
 
     [FieldChangeCallback(nameof(textAssetSource))]
     public TextAsset _textAssetSource;
+
+    /// <summary>
+    /// The JSON string to parse. This is a string. Upon setting this value, the hierarchy will be cleared and rebuilt.
+    /// </summary>
     public string stringSource
     {
         set
@@ -33,6 +72,9 @@ public class JSONManager : UdonSharpBehaviour
         get { return _stringSource; }
     }
 
+    /// <summary>
+    /// The JSON string to parse. This is text asset. Upon setting this value, the hierarchy will be cleared and rebuilt.
+    /// </summary>
     public TextAsset textAssetSource
     {
         set
@@ -50,6 +92,21 @@ public class JSONManager : UdonSharpBehaviour
         }
         get { return _textAssetSource; }
     }
+
+    /// <summary>
+    /// This is a variable to watch for updates. This script will automatically update the hierarchy when this variable changes.
+    /// </summary>
+    [HideInInspector]
+    public string watchVariable = "";
+
+    /// <summary>
+    /// The behaviour to watch for updates. This script will automatically update the hierarchy when this behaviour's variable changes.
+    /// </summary>
+    [Tooltip(
+        "The behaviour to watch for updates. This script will automatically update the hierarchy when this behaviour's variable changes."
+    )]
+    public UdonSharpBehaviour watchBehaviour;
+
     public GameObject keyValuePairPrefab;
 
     void Start()
@@ -66,10 +123,22 @@ public class JSONManager : UdonSharpBehaviour
         initializeHierarchy(json);
     }
 
+    void Update()
+    {
+        if (watchBehaviour != null)
+        {
+            //check if the variable has changed
+            if ((string)watchBehaviour.GetProgramVariable(watchVariable) != stringSource)
+            {
+                SetJson((string)watchBehaviour.GetProgramVariable(watchVariable));
+            }
+        }
+    }
+
     // Recursive function to create the hierarchy system
     [RecursiveMethod]
     public void initializeHierarchy(
-        UdonJsonValue curJson,
+        DataDictionary curJson,
         GameObject root = null,
         int currentDepth = 0
     )
@@ -85,63 +154,59 @@ public class JSONManager : UdonSharpBehaviour
             root = gameObject;
         }
 
-        string[] keys = curJson.Keys();
-        foreach (string key in keys)
+        DataToken[] keys = curJson.GetKeys().ToArray();
+        foreach (DataToken key in keys)
         {
             // Create the object
             GameObject obj = Instantiate(keyValuePairPrefab, root.transform);
-            switch (curJson.GetValue(key).GetKind())
+            curJson.TryGetValue(key, out DataToken value);
+            Debug.Log(value.TokenType);
+            switch (value.TokenType)
             {
-                case UdonJsonValueKind.Array:
+                case TokenType.DataList:
                     string arrayString = "";
-                    for (int i = 0; i < curJson.GetValue(key).Count(); i++)
+                    for (int i = 0; i < value.DataList.Count; i++)
                     {
-                        UdonJsonValue element = curJson.GetValue(key).GetValue(i);
-                        arrayString += element.AsString();
-                        if (i != curJson.GetValue(key).Count() - 1)
+                        value.DataList.TryGetValue(i, out DataToken element);
+                        //DataToken element = key.DataList[i];
+                        arrayString += element.ToString();
+                        if (i != value.DataList.Count - 1)
                         {
                             arrayString += ", ";
                         }
                     }
                     obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key + " [" + arrayString + "] ";
+                        key.ToString() + ": [" + arrayString + "] ";
                     break;
-                case UdonJsonValueKind.String:
+                case TokenType.DataDictionary:
                     obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key + ": " + curJson.GetValue(key).AsString();
-                    break;
-                case UdonJsonValueKind.Number:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key + ": " + curJson.GetValue(key).AsNumber();
-                    break;
-                case UdonJsonValueKind.True:
-                case UdonJsonValueKind.False:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key + ": " + curJson.GetValue(key).AsBool();
-                    break;
-                case UdonJsonValueKind.Null:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key + ": " + curJson.GetValue(key).AsNull();
-                    break;
-                case UdonJsonValueKind.Object:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key + " {" + curJson.GetValue(key).Keys().Length + "}";
-                    initializeHierarchy(curJson.GetValue(key), obj, currentDepth + 1);
+                        key.ToString() + " {" + value.DataDictionary.Count + "} ";
+                    initializeHierarchy(value.DataDictionary, obj, currentDepth + 1);
                     break;
                 default:
-                    Debug.LogError("Unknown type: " + curJson.GetValue(key));
+                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                        key.ToString() + ": " + value.ToString();
                     break;
             }
 
-            obj.name = key;
+            obj.name = key.ToString();
 
             int index = System.Array.IndexOf(keys, key);
         }
     }
 
-    void SetJson(string json)
+    void SetJson(string jsonIN)
     {
-        var result = UdonJsonDeserializer.TryDeserialize(json, out this.json);
+        DataToken jsonDataToken;
+        bool success = VRCJson.TryDeserializeFromJson(jsonIN, out jsonDataToken);
+        if (success)
+        {
+            json = jsonDataToken.DataDictionary;
+        }
+        else
+        {
+            Debug.LogError("Failed to deserialize JSON");
+        }
     }
 
     void SetJson(TextAsset textAsset)
