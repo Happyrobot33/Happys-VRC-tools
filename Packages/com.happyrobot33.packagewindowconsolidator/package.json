@@ -1,7 +1,7 @@
 {
   "name": "com.happyrobot33.packagewindowconsolidator",
   "displayName": "Package Window Consolidator",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "unity": "2019.4",
   "description": "This package edits other packages to put all of their unity tab dropdowns into a single dropdown. This is useful for larger projects with many packages installed.",
   "author": {

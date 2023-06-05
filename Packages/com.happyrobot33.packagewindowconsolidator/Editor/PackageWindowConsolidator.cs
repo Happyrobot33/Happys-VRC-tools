@@ -20,8 +20,46 @@ public class PackageWindowConsolidator : MonoBehaviour
         {
             AssetDatabase.StartAssetEditing();
 
-            //get all the packages
+            //get all the normal packages
             string[] packages = Directory.GetDirectories("Packages");
+
+            //get all the tarball packages in the Packages folder
+            string[] tarballs = Directory.GetFiles(
+                "Packages",
+                "*.tgz",
+                SearchOption.AllDirectories
+            );
+            foreach (string tarpackage in tarballs)
+            {
+                //get the name of the package
+                string packageName = Path.GetFileNameWithoutExtension(tarpackage);
+                //get the project manifest
+                string manifest = File.ReadAllText("Packages/manifest.json");
+                //find the index containing the package name
+                int packageIndex = manifest.IndexOf(packageName);
+                int lineStart = manifest.LastIndexOf("\n", packageIndex) + 1;
+                //get the entire ine containing the package name
+                string packageLine = manifest.Substring(
+                    lineStart,
+                    manifest.IndexOf("\n", packageIndex) - lineStart
+                );
+                //find the actual package domain name
+                string packageDomain = packageLine.Substring(packageLine.IndexOf("\"") + 1);
+                packageDomain = packageDomain.Substring(0, packageDomain.IndexOf("\""));
+
+                //now that we have the package domain, we can search for it in the library folder
+                string[] libraryPackages = Directory.GetDirectories("Library/PackageCache");
+                foreach (string libraryPackage in libraryPackages)
+                {
+                    //if the package domain matches the library package domain
+                    if (libraryPackage.Contains(packageDomain))
+                    {
+                        //add the package to the packages list
+                        System.Array.Resize(ref packages, packages.Length + 1);
+                        packages[packages.Length - 1] = libraryPackage;
+                    }
+                }
+            }
 
             //loop through all the packages
             foreach (string package in packages)
@@ -39,7 +77,10 @@ public class PackageWindowConsolidator : MonoBehaviour
                 //find every .cs file in the package
                 string[] files = Directory.GetFiles(package, "*.cs", SearchOption.AllDirectories);
                 //ensure that this script is not included in the list
-                files = System.Array.FindAll(files, s => !s.EndsWith("PackageWindowConsolidator.cs"));
+                files = System.Array.FindAll(
+                    files,
+                    s => !s.EndsWith("PackageWindowConsolidator.cs")
+                );
 
                 //loop through all the files
                 foreach (string file in files)
@@ -48,7 +89,11 @@ public class PackageWindowConsolidator : MonoBehaviour
                     int fileIndex = System.Array.IndexOf(files, file);
 
                     //update the progress bar
-                    EditorUtility.DisplayProgressBar("Consolidating Packages", "Consolidating " + packageName, fileIndex / (float)files.Length);
+                    EditorUtility.DisplayProgressBar(
+                        "Consolidating Packages",
+                        "Consolidating " + packageName,
+                        fileIndex / (float)files.Length
+                    );
 
                     //read the file
                     string[] lines = File.ReadAllLines(file);
@@ -72,7 +117,11 @@ public class PackageWindowConsolidator : MonoBehaviour
                                 if (variableLine.Contains(variableName + " = "))
                                 {
                                     //get the value of the variable
-                                    string variableValue = variableLine.Substring(variableLine.IndexOf(variableName + " = ") + variableName.Length + 3);
+                                    string variableValue = variableLine.Substring(
+                                        variableLine.IndexOf(variableName + " = ")
+                                            + variableName.Length
+                                            + 3
+                                    );
 
                                     //remove the quotes and semicolon
                                     resolvedPath = variableValue.Replace("\"", "").Replace(";", "");
@@ -83,7 +132,14 @@ public class PackageWindowConsolidator : MonoBehaviour
                             if (resolvedPath != "")
                             {
                                 //replace the variable with the resolved path
-                                File.WriteAllText(file, File.ReadAllText(file).Replace("[MenuItem(" + variableName + ")]", "[MenuItem(\"" + resolvedPath + "\")]"));
+                                File.WriteAllText(
+                                    file,
+                                    File.ReadAllText(file)
+                                        .Replace(
+                                            "[MenuItem(" + variableName + ")]",
+                                            "[MenuItem(\"" + resolvedPath + "\")]"
+                                        )
+                                );
 
                                 //reimport the file
                                 AssetDatabase.ImportAsset(file);
@@ -103,11 +159,19 @@ public class PackageWindowConsolidator : MonoBehaviour
                             //replace the Window/ with VRC Packages/
                             if (line.Contains("[MenuItem(\"Window/"))
                             {
-                                File.WriteAllText(file, File.ReadAllText(file).Replace("[MenuItem(\"Window/", "[MenuItem(\"VRC Packages/"));
+                                File.WriteAllText(
+                                    file,
+                                    File.ReadAllText(file)
+                                        .Replace("[MenuItem(\"Window/", "[MenuItem(\"VRC Packages/")
+                                );
                             }
                             else if (line.Contains("[MenuItem(\"Tools/"))
                             {
-                                File.WriteAllText(file, File.ReadAllText(file).Replace("[MenuItem(\"Tools/", "[MenuItem(\"VRC Packages/"));
+                                File.WriteAllText(
+                                    file,
+                                    File.ReadAllText(file)
+                                        .Replace("[MenuItem(\"Tools/", "[MenuItem(\"VRC Packages/")
+                                );
                             }
                             else if (IsMenuItemMovable(line)) //make sure the menu item is not in some of the other dropdowns
                             {
@@ -119,10 +183,19 @@ public class PackageWindowConsolidator : MonoBehaviour
                                 path = "VRC Packages/" + path;
 
                                 //replace the path in the line
-                                string newLine = line.Replace(line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - line.IndexOf("\"") - 1), path);
+                                string newLine = line.Replace(
+                                    line.Substring(
+                                        line.IndexOf("\"") + 1,
+                                        line.LastIndexOf("\"") - line.IndexOf("\"") - 1
+                                    ),
+                                    path
+                                );
 
                                 //write the new line to the file
-                                File.WriteAllText(file, File.ReadAllText(file).Replace(line, newLine));
+                                File.WriteAllText(
+                                    file,
+                                    File.ReadAllText(file).Replace(line, newLine)
+                                );
                             }
                         }
                     }
@@ -132,7 +205,13 @@ public class PackageWindowConsolidator : MonoBehaviour
         catch (System.Exception e)
         {
             Debug.LogError(e);
-            EditorUtility.DisplayDialog("Error", "An error occured while consolidating packages. Please check the console for more information. The error occured while consolidating " + currentWorkingPackage + ". You might need to reimport this package", "Ok");
+            EditorUtility.DisplayDialog(
+                "Error",
+                "An error occured while consolidating packages. Please check the console for more information. The error occured while consolidating "
+                    + currentWorkingPackage
+                    + ". You might need to reimport this package",
+                "Ok"
+            );
         }
         finally
         {
@@ -144,7 +223,17 @@ public class PackageWindowConsolidator : MonoBehaviour
     //as long as the menu item is either at the top level or is in Window, we can move it
     public static bool IsMenuItemMovable(string line)
     {
-        string[] blockedTabs = new string[] { "File", "Edit", "Assets", "GameObject", "Component", "VRChat SDK", "Help", "Jobs" };
+        string[] blockedTabs = new string[]
+        {
+            "File",
+            "Edit",
+            "Assets",
+            "GameObject",
+            "Component",
+            "VRChat SDK",
+            "Help",
+            "Jobs"
+        };
 
         foreach (string tab in blockedTabs)
         {
