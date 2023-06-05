@@ -10,6 +10,66 @@ VRC Packages
     AnotherPackagename
 */
 
+//watch for changes to the project
+public class PackageWindowConsolidatorWatcher : AssetPostprocessor
+{
+    public static void OnPostprocessAllAssets(
+        string[] importedAssets,
+        string[] deletedAssets,
+        string[] movedAssets,
+        string[] movedFromAssetPaths
+    )
+    {
+        string[] allImportedAssets = new string[0];
+        foreach (var importedAsset in importedAssets)
+        {
+            //check to make sure it is in the Packages folder
+            if (!importedAsset.StartsWith("Packages/"))
+            {
+                continue;
+            }
+            //check to make sure it isnt us
+            if (importedAsset.Contains("PackageWindowConsolidator"))
+            {
+                continue;
+            }
+            //check to make sure it is a .cs file
+            if (!importedAsset.EndsWith(".cs"))
+            {
+                continue;
+            }
+            //check if the file has already been moved
+            if (PackageWindowConsolidator.IsFileConsolidated(importedAsset))
+            {
+                continue;
+            }
+
+            //save them to a new array
+            System.Array.Resize(ref allImportedAssets, allImportedAssets.Length + 1);
+            allImportedAssets[allImportedAssets.Length - 1] = importedAsset;
+        }
+
+        if (allImportedAssets.Length != 0)
+        {
+            //ask the user if they want to consolidate the packages
+            if (
+                EditorUtility.DisplayDialog(
+                    "Consolidate Packages",
+                    "Would you like to consolidate the packages you just added/updated?",
+                    "Yes",
+                    "No",
+                    DialogOptOutDecisionType.ForThisSession,
+                    "PackageWindowConsolidator.ConsolidatePackages"
+                )
+            )
+            {
+                //consolidate the packages
+                PackageWindowConsolidator.ConsolidatePackages();
+            }
+        }
+    }
+}
+
 public class PackageWindowConsolidator : MonoBehaviour
 {
     [MenuItem("VRC Packages/Consolidate Packages", false, -1000)]
@@ -244,5 +304,41 @@ public class PackageWindowConsolidator : MonoBehaviour
         }
 
         return true;
+    }
+
+    //all in one function to check if we have already consolidated a file
+    public static bool IsFileConsolidated(string file)
+    {
+        string[] lines = File.ReadAllLines(file);
+
+        bool containsMenuItem = false;
+
+        foreach (string line in lines)
+        {
+            if (line.Contains("[MenuItem"))
+            {
+                containsMenuItem = true;
+            }
+
+            if (line.Contains("[MenuItem(\"VRC Packages/"))
+            {
+                return true;
+            }
+        }
+
+        //if the file does not contain a MenuItem attribute, we can assume that it is not a script that we need to consolidate
+        if (!containsMenuItem)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    //adds the ability to clear the session preference to always consolidate packages
+    [MenuItem("VRC Packages/Disable Automatic Consolidation", false, -1000)]
+    public static void DisableAutomaticConsolidation()
+    {
+        SessionState.SetBool("PackageWindowConsolidator.ConsolidatePackages", false);
     }
 }
