@@ -10,200 +10,248 @@ using System.Collections;
 using UnityEditor;
 using UnityEngine.UI;
 
-public class Shader_Finder : EditorWindow
+namespace HappysTools.ShaderFinder
 {
-    //create a shader list
-    public static Shader[] shaderList = new Shader[0];
-    public static string[] shaderNameList = new string[0];
-    public int index = 0;
-    public GameObject ObjectToSearch;
-    public int objectCountFound = 0;
-
-    [MenuItem("VRC Packages/Shader Finder")]
-    public static void ShowWindow()
+    public class ShaderFinder : EditorWindow
     {
-        //create a new window
-        EditorWindow window = EditorWindow.GetWindow(typeof(Shader_Finder));
-        //set name of window
-        window.titleContent = new GUIContent("Shader Finder");
-        window.Show();
-    }
+        //create a shader list
+        public static Shader[] shaderList = new Shader[0];
+        public static string[] shaderNameList = new string[0];
+        public int index = 0;
+        public GameObject ObjectToSearch;
+        public int objectCountFound = 0;
 
-    private void OnGUI(){
-        //create a new label
-        GUILayout.Label("Shader Finder", EditorStyles.boldLabel);
-        //create a description label
-        GUILayout.Label("This tool will find all the shaders in the scene, and select the relevant gameobjects. If you are using a shader that locks itself into a 'optimized' mode, then you will need to search for it under Hidden, IE for Poiyomi it will be under Hidden -> Locked", EditorStyles.wordWrappedLabel);
-        //create a new dropdown menu
-        index = EditorGUILayout.Popup(index, shaderNameList);
-        //create a button that will refresh the shader list
-        if(GUILayout.Button("Refresh Shader List")){
-            //clear the list
-            shaderList = new Shader[0];
-            shaderNameList = new string[0];
+        [MenuItem("VRC Packages/Happys Tools/Shader Finder")]
+        public static void ShowWindow()
+        {
+            //create a new window
+            EditorWindow window = EditorWindow.GetWindow(typeof(ShaderFinder));
+            //set name of window
+            window.titleContent = new GUIContent("Shader Finder");
+            window.Show();
         }
 
-        //find every shader in the project and add it to the list
-        if (shaderList.Length == 0)
+        private void OnGUI()
         {
-            shaderList = Resources.FindObjectsOfTypeAll<Shader>();
-            shaderNameList = new string[shaderList.Length];
-            for (int i = 0; i < shaderList.Length; i++)
+            //create a new label
+            GUILayout.Label("Shader Finder", EditorStyles.boldLabel);
+            //create a description label
+            GUILayout.Label(
+                "This tool will find all the shaders in the scene, and select the relevant gameobjects. If you are using a shader that locks itself into a 'optimized' mode, then you will need to search for it under Hidden, IE for Poiyomi it will be under Hidden -> Locked",
+                EditorStyles.wordWrappedLabel
+            );
+            //create a new dropdown menu
+            index = EditorGUILayout.Popup(index, shaderNameList);
+            //create a button that will refresh the shader list
+            if (GUILayout.Button("Refresh Shader List"))
             {
-                shaderNameList[i] = shaderList[i].name;
-            }
-        }
-
-        //add a field to input a gameobject from the scene
-        ObjectToSearch = EditorGUILayout.ObjectField("Object to search", ObjectToSearch, typeof(GameObject), true) as GameObject;
-
-        if(shaderList.Length > 0 && ObjectToSearch != null)
-        {
-            //get every object in the scene
-            //GameObject[] objects = (GameObject[])FindObjectsOfTypeAll(typeof(GameObject));
-            Transform[] objectsTRANSFORMS = ObjectToSearch.GetComponentsInChildren<Transform>(true);
-
-            //turn the objects array into an array of gameobjects, not transforms
-            GameObject[] objects = new GameObject[objectsTRANSFORMS.Length];
-            for (int i = 0; i < objects.Length; i++)
-            {
-                objects[i] = objectsTRANSFORMS[i].gameObject;
+                //clear the list
+                shaderList = new Shader[0];
+                shaderNameList = new string[0];
             }
 
-            //list the ammount of objects with the selected shader
-            EditorGUILayout.LabelField("Total Objects to search: " + objects.Length);
-            EditorGUILayout.LabelField("Objects with the selected shader on last search: " + objectCountFound);
-
-            //create a new button
-            if(GUILayout.Button("Select objects with specified Shader")){
-                //clear selection
-                Selection.activeGameObject = null;
-                //get every object in the list with a renderer of some kind
-                foreach (GameObject obj in objects)
+            //find every shader in the project and add it to the list
+            if (shaderList.Length == 0)
+            {
+                shaderList = Resources.FindObjectsOfTypeAll<Shader>();
+                shaderNameList = new string[shaderList.Length];
+                for (int i = 0; i < shaderList.Length; i++)
                 {
-                    if (obj.GetComponent<MeshRenderer>() != null)
+                    shaderNameList[i] = shaderList[i].name;
+                }
+            }
+
+            //add a field to input a gameobject from the scene
+            ObjectToSearch =
+                EditorGUILayout.ObjectField(
+                    "Object to search",
+                    ObjectToSearch,
+                    typeof(GameObject),
+                    true
+                ) as GameObject;
+
+            if (shaderList.Length > 0 && ObjectToSearch != null)
+            {
+                //get every object in the scene
+                //GameObject[] objects = (GameObject[])FindObjectsOfTypeAll(typeof(GameObject));
+                Transform[] objectsTRANSFORMS = ObjectToSearch.GetComponentsInChildren<Transform>(
+                    true
+                );
+
+                //turn the objects array into an array of gameobjects, not transforms
+                GameObject[] objects = new GameObject[objectsTRANSFORMS.Length];
+                for (int i = 0; i < objects.Length; i++)
+                {
+                    objects[i] = objectsTRANSFORMS[i].gameObject;
+                }
+
+                //list the ammount of objects with the selected shader
+                EditorGUILayout.LabelField("Total Objects to search: " + objects.Length);
+                EditorGUILayout.LabelField(
+                    "Objects with the selected shader on last search: " + objectCountFound
+                );
+
+                //create a new button
+                if (GUILayout.Button("Select objects with specified Shader"))
+                {
+                    //clear selection
+                    Selection.activeGameObject = null;
+                    //get every object in the list with a renderer of some kind
+                    foreach (GameObject obj in objects)
                     {
-                        //check if the object has multiple materials
-                        if (obj.GetComponent<Renderer>().sharedMaterials.Length > 1)
+                        if (obj.GetComponent<MeshRenderer>() != null)
                         {
-                            //check if the object has the selected shader
-                            for (int i = 0; i < obj.GetComponent<Renderer>().sharedMaterials.Length; i++)
+                            //check if the object has multiple materials
+                            if (obj.GetComponent<Renderer>().sharedMaterials.Length > 1)
                             {
-                                //check to make sure the material isnt null
-                                if (obj.GetComponent<Renderer>().sharedMaterials[i] != null)
+                                //check if the object has the selected shader
+                                for (
+                                    int i = 0;
+                                    i < obj.GetComponent<Renderer>().sharedMaterials.Length;
+                                    i++
+                                )
                                 {
-                                    //check if the material is the selected shader
-                                    if (obj.GetComponent<Renderer>().sharedMaterials[i].shader == shaderList[index])
+                                    //check to make sure the material isnt null
+                                    if (obj.GetComponent<Renderer>().sharedMaterials[i] != null)
                                     {
-                                        //select the object
-                                        Selection.objects = addToArray(Selection.objects, obj);
+                                        //check if the material is the selected shader
+                                        if (
+                                            obj.GetComponent<Renderer>().sharedMaterials[i].shader
+                                            == shaderList[index]
+                                        )
+                                        {
+                                            //select the object
+                                            Selection.objects = addToArray(Selection.objects, obj);
+                                        }
                                     }
                                 }
                             }
+                            else
+                            {
+                                //check if the object has the selected shader
+                                if (
+                                    obj.GetComponent<Renderer>().sharedMaterial.shader
+                                    == shaderList[index]
+                                )
+                                {
+                                    //select the object
+                                    Selection.objects = addToArray(Selection.objects, obj);
+                                }
+                            }
                         }
-                        else
+                        else if (obj.GetComponent<SkinnedMeshRenderer>() != null)
+                        {
+                            //check if the object has multiple materials
+                            if (obj.GetComponent<Renderer>().sharedMaterials.Length > 1)
+                            {
+                                //check if the object has the selected shader
+                                for (
+                                    int i = 0;
+                                    i < obj.GetComponent<Renderer>().sharedMaterials.Length;
+                                    i++
+                                )
+                                {
+                                    //check to make sure the material isnt null
+                                    if (obj.GetComponent<Renderer>().sharedMaterials[i] != null)
+                                    {
+                                        if (
+                                            obj.GetComponent<Renderer>().sharedMaterials[i].shader
+                                            == shaderList[index]
+                                        )
+                                        {
+                                            //select the object
+                                            Selection.objects = addToArray(Selection.objects, obj);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //check if the object has the selected shader
+                                if (
+                                    obj.GetComponent<Renderer>().sharedMaterial.shader
+                                    == shaderList[index]
+                                )
+                                {
+                                    //select the object
+                                    Selection.objects = addToArray(Selection.objects, obj);
+                                }
+                            }
+                        }
+                        else if (obj.GetComponent<ParticleSystemRenderer>() != null)
                         {
                             //check if the object has the selected shader
-                            if (obj.GetComponent<Renderer>().sharedMaterial.shader == shaderList[index])
+                            if (
+                                obj.GetComponent<ParticleSystemRenderer>().sharedMaterial.shader
+                                == shaderList[index]
+                            )
                             {
                                 //select the object
                                 Selection.objects = addToArray(Selection.objects, obj);
                             }
                         }
-                    }
-                    else if (obj.GetComponent<SkinnedMeshRenderer>() != null)
-                    {
-                        //check if the object has multiple materials
-                        if (obj.GetComponent<Renderer>().sharedMaterials.Length > 1)
+                        else if (obj.GetComponent<TrailRenderer>() != null)
                         {
                             //check if the object has the selected shader
-                            for (int i = 0; i < obj.GetComponent<Renderer>().sharedMaterials.Length; i++)
-                            {
-                                //check to make sure the material isnt null
-                                if (obj.GetComponent<Renderer>().sharedMaterials[i] != null)
-                                {
-                                    if (obj.GetComponent<Renderer>().sharedMaterials[i].shader == shaderList[index])
-                                    {
-                                        //select the object
-                                        Selection.objects = addToArray(Selection.objects, obj);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //check if the object has the selected shader
-                            if (obj.GetComponent<Renderer>().sharedMaterial.shader == shaderList[index])
+                            if (
+                                obj.GetComponent<TrailRenderer>().sharedMaterial.shader
+                                == shaderList[index]
+                            )
                             {
                                 //select the object
                                 Selection.objects = addToArray(Selection.objects, obj);
                             }
                         }
-                    }
-                    else if (obj.GetComponent<ParticleSystemRenderer>() != null)
-                    {
-                        //check if the object has the selected shader
-                        if (obj.GetComponent<ParticleSystemRenderer>().sharedMaterial.shader == shaderList[index])
+                        else if (obj.GetComponent<LineRenderer>() != null)
                         {
-                            //select the object
-                            Selection.objects = addToArray(Selection.objects, obj);
+                            //check if the object has the selected shader
+                            if (
+                                obj.GetComponent<LineRenderer>().sharedMaterial.shader
+                                == shaderList[index]
+                            )
+                            {
+                                //select the object
+                                Selection.objects = addToArray(Selection.objects, obj);
+                            }
                         }
-                    }
-                    else if (obj.GetComponent<TrailRenderer>() != null)
-                    {
-                        //check if the object has the selected shader
-                        if (obj.GetComponent<TrailRenderer>().sharedMaterial.shader == shaderList[index])
+                        else if (obj.GetComponent<Image>() != null)
                         {
-                            //select the object
-                            Selection.objects = addToArray(Selection.objects, obj);
+                            //check if the object has the selected shader
+                            if (obj.GetComponent<Image>().material.shader == shaderList[index])
+                            {
+                                //select the object
+                                Selection.objects = addToArray(Selection.objects, obj);
+                            }
                         }
-                    }
-                    else if (obj.GetComponent<LineRenderer>() != null)
-                    {
-                        //check if the object has the selected shader
-                        if (obj.GetComponent<LineRenderer>().sharedMaterial.shader == shaderList[index])
+                        else if (obj.GetComponent<Text>() != null)
                         {
-                            //select the object
-                            Selection.objects = addToArray(Selection.objects, obj);
-                        }
-                    }
-                    else if (obj.GetComponent<Image>() != null)
-                    {
-                        //check if the object has the selected shader
-                        if (obj.GetComponent<Image>().material.shader == shaderList[index])
-                        {
-                            //select the object
-                            Selection.objects = addToArray(Selection.objects, obj);
-                        }
-                    }
-                    else if (obj.GetComponent<Text>() != null)
-                    {
-                        //check if the object has the selected shader
-                        if (obj.GetComponent<Text>().material.shader == shaderList[index])
-                        {
-                            //select the object
-                            Selection.objects = addToArray(Selection.objects, obj);
+                            //check if the object has the selected shader
+                            if (obj.GetComponent<Text>().material.shader == shaderList[index])
+                            {
+                                //select the object
+                                Selection.objects = addToArray(Selection.objects, obj);
+                            }
                         }
                     }
                 }
             }
+
+            objectCountFound = Selection.objects.Length;
         }
 
-        objectCountFound = Selection.objects.Length;
-    }
-
-    private UnityEngine.Object[] addToArray(UnityEngine.Object[] array, GameObject obj)
-    {
-        //create a new array
-        UnityEngine.Object[] newArray = new UnityEngine.Object[array.Length + 1];
-        //add the old array to the new array
-        for (int i = 0; i < array.Length; i++)
+        private UnityEngine.Object[] addToArray(UnityEngine.Object[] array, GameObject obj)
         {
-            newArray[i] = array[i];
+            //create a new array
+            UnityEngine.Object[] newArray = new UnityEngine.Object[array.Length + 1];
+            //add the old array to the new array
+            for (int i = 0; i < array.Length; i++)
+            {
+                newArray[i] = array[i];
+            }
+            //add the new object to the new array
+            newArray[array.Length] = obj;
+            //return the new array
+            return newArray;
         }
-        //add the new object to the new array
-        newArray[array.Length] = obj;
-        //return the new array
-        return newArray;
     }
 }

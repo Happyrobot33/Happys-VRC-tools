@@ -1,7 +1,7 @@
 {
   "name": "com.happyrobot33.lightprobepopulator",
   "displayName": "Light Probe Populator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "unity": "2019.4",
   "description": "This package automatically places light probes in ideal locations for you",
   "author": {

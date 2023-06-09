@@ -3,19 +3,22 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-public class TestJsonSetting : UdonSharpBehaviour
+namespace HappysTools.PrettyJSONUI
 {
-    public JSONManager jsonManager;
-    public string stringSource = "";
-    public TextAsset textAssetSource;
-
-    public void sendSetString()
+    public class TestJsonSetting : UdonSharpBehaviour
     {
-        jsonManager.stringSource = stringSource;
-    }
+        public JSONManager jsonManager;
+        public string stringSource = "";
+        public TextAsset textAssetSource;
 
-    public void sendSetTextAsset()
-    {
-        jsonManager.textAssetSource = textAssetSource;
+        public void sendSetString()
+        {
+            jsonManager.stringSource = stringSource;
+        }
+
+        public void sendSetTextAsset()
+        {
+            jsonManager.textAssetSource = textAssetSource;
+        }
     }
 }

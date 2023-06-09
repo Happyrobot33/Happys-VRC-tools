@@ -1,7 +1,7 @@
 {
     "name": "com.happyrobot33.prettyjsonui",
     "displayName": "Pretty JSON UI",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "unity": "2019.4",
     "description": "This package provides a prefab that can be used to view JSON files in Unity on a canvas",
     "author": {

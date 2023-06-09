@@ -5,6 +5,8 @@ using VRC.Udon;
 using VRC.SDK3.Data;
 using System.Reflection;
 
+namespace HappysTools.PrettyJSONUI
+{
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -39,178 +41,179 @@ public class JSONManagerInspector : Editor {
 }
 #endif
 
-public class JSONManager : UdonSharpBehaviour
-{
-    DataDictionary json;
-    public int depthLimit = 10;
-    public float indentSpacing = 0.1f;
-
-    [FieldChangeCallback(nameof(stringSource))]
-    public string _stringSource = "";
-
-    [FieldChangeCallback(nameof(textAssetSource))]
-    public TextAsset _textAssetSource;
-
-    /// <summary>
-    /// The JSON string to parse. This is a string. Upon setting this value, the hierarchy will be cleared and rebuilt.
-    /// </summary>
-    public string stringSource
+    public class JSONManager : UdonSharpBehaviour
     {
-        set
-        {
-            _stringSource = value;
-            // Clear the hierarchy
-            foreach (Transform child in transform)
-            {
-                Destroy(child.gameObject);
-            }
+        DataDictionary json;
+        public int depthLimit = 10;
+        public float indentSpacing = 0.1f;
 
-            SetJson(value);
+        [FieldChangeCallback(nameof(stringSource))]
+        public string _stringSource = "";
+
+        [FieldChangeCallback(nameof(textAssetSource))]
+        public TextAsset _textAssetSource;
+
+        /// <summary>
+        /// The JSON string to parse. This is a string. Upon setting this value, the hierarchy will be cleared and rebuilt.
+        /// </summary>
+        public string stringSource
+        {
+            set
+            {
+                _stringSource = value;
+                // Clear the hierarchy
+                foreach (Transform child in transform)
+                {
+                    Destroy(child.gameObject);
+                }
+
+                SetJson(value);
+
+                initializeHierarchy(json);
+            }
+            get { return _stringSource; }
+        }
+
+        /// <summary>
+        /// The JSON string to parse. This is text asset. Upon setting this value, the hierarchy will be cleared and rebuilt.
+        /// </summary>
+        public TextAsset textAssetSource
+        {
+            set
+            {
+                _textAssetSource = value;
+                // Clear the hierarchy
+                foreach (Transform child in transform)
+                {
+                    Destroy(child.gameObject);
+                }
+
+                SetJson(value);
+
+                initializeHierarchy(json);
+            }
+            get { return _textAssetSource; }
+        }
+
+        /// <summary>
+        /// This is a variable to watch for updates. This script will automatically update the hierarchy when this variable changes.
+        /// </summary>
+        [HideInInspector]
+        public string watchVariable = "";
+
+        /// <summary>
+        /// The behaviour to watch for updates. This script will automatically update the hierarchy when this behaviour's variable changes.
+        /// </summary>
+        [Tooltip(
+            "The behaviour to watch for updates. This script will automatically update the hierarchy when this behaviour's variable changes."
+        )]
+        public UdonSharpBehaviour watchBehaviour;
+
+        public GameObject keyValuePairPrefab;
+
+        void Start()
+        {
+            if (stringSource != "")
+            {
+                SetJson(stringSource);
+            }
+            else if (textAssetSource != null)
+            {
+                SetJson(textAssetSource);
+            }
 
             initializeHierarchy(json);
         }
-        get { return _stringSource; }
-    }
 
-    /// <summary>
-    /// The JSON string to parse. This is text asset. Upon setting this value, the hierarchy will be cleared and rebuilt.
-    /// </summary>
-    public TextAsset textAssetSource
-    {
-        set
+        void Update()
         {
-            _textAssetSource = value;
-            // Clear the hierarchy
-            foreach (Transform child in transform)
+            if (watchBehaviour != null)
             {
-                Destroy(child.gameObject);
-            }
-
-            SetJson(value);
-
-            initializeHierarchy(json);
-        }
-        get { return _textAssetSource; }
-    }
-
-    /// <summary>
-    /// This is a variable to watch for updates. This script will automatically update the hierarchy when this variable changes.
-    /// </summary>
-    [HideInInspector]
-    public string watchVariable = "";
-
-    /// <summary>
-    /// The behaviour to watch for updates. This script will automatically update the hierarchy when this behaviour's variable changes.
-    /// </summary>
-    [Tooltip(
-        "The behaviour to watch for updates. This script will automatically update the hierarchy when this behaviour's variable changes."
-    )]
-    public UdonSharpBehaviour watchBehaviour;
-
-    public GameObject keyValuePairPrefab;
-
-    void Start()
-    {
-        if (stringSource != "")
-        {
-            SetJson(stringSource);
-        }
-        else if (textAssetSource != null)
-        {
-            SetJson(textAssetSource);
-        }
-
-        initializeHierarchy(json);
-    }
-
-    void Update()
-    {
-        if (watchBehaviour != null)
-        {
-            //check if the variable has changed
-            if ((string)watchBehaviour.GetProgramVariable(watchVariable) != stringSource)
-            {
-                SetJson((string)watchBehaviour.GetProgramVariable(watchVariable));
+                //check if the variable has changed
+                if ((string)watchBehaviour.GetProgramVariable(watchVariable) != stringSource)
+                {
+                    SetJson((string)watchBehaviour.GetProgramVariable(watchVariable));
+                }
             }
         }
-    }
 
-    // Recursive function to create the hierarchy system
-    [RecursiveMethod]
-    public void initializeHierarchy(
-        DataDictionary curJson,
-        GameObject root = null,
-        int currentDepth = 0
-    )
-    {
-        if (currentDepth > depthLimit)
+        // Recursive function to create the hierarchy system
+        [RecursiveMethod]
+        public void initializeHierarchy(
+            DataDictionary curJson,
+            GameObject root = null,
+            int currentDepth = 0
+        )
         {
-            Debug.LogError("Depth limit reached, aborting");
-            return;
-        }
-
-        if (root == null)
-        {
-            root = gameObject;
-        }
-
-        DataToken[] keys = curJson.GetKeys().ToArray();
-        foreach (DataToken key in keys)
-        {
-            // Create the object
-            GameObject obj = Instantiate(keyValuePairPrefab, root.transform);
-            curJson.TryGetValue(key, out DataToken value);
-            Debug.Log(value.TokenType);
-            switch (value.TokenType)
+            if (currentDepth > depthLimit)
             {
-                case TokenType.DataList:
-                    string arrayString = "";
-                    for (int i = 0; i < value.DataList.Count; i++)
-                    {
-                        value.DataList.TryGetValue(i, out DataToken element);
-                        //DataToken element = key.DataList[i];
-                        arrayString += element.ToString();
-                        if (i != value.DataList.Count - 1)
+                Debug.LogError("Depth limit reached, aborting");
+                return;
+            }
+
+            if (root == null)
+            {
+                root = gameObject;
+            }
+
+            DataToken[] keys = curJson.GetKeys().ToArray();
+            foreach (DataToken key in keys)
+            {
+                // Create the object
+                GameObject obj = Instantiate(keyValuePairPrefab, root.transform);
+                curJson.TryGetValue(key, out DataToken value);
+                Debug.Log(value.TokenType);
+                switch (value.TokenType)
+                {
+                    case TokenType.DataList:
+                        string arrayString = "";
+                        for (int i = 0; i < value.DataList.Count; i++)
                         {
-                            arrayString += ", ";
+                            value.DataList.TryGetValue(i, out DataToken element);
+                            //DataToken element = key.DataList[i];
+                            arrayString += element.ToString();
+                            if (i != value.DataList.Count - 1)
+                            {
+                                arrayString += ", ";
+                            }
                         }
-                    }
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key.ToString() + ": [" + arrayString + "] ";
-                    break;
-                case TokenType.DataDictionary:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key.ToString() + " {" + value.DataDictionary.Count + "} ";
-                    initializeHierarchy(value.DataDictionary, obj, currentDepth + 1);
-                    break;
-                default:
-                    obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
-                        key.ToString() + ": " + value.ToString();
-                    break;
+                        obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                            key.ToString() + ": [" + arrayString + "] ";
+                        break;
+                    case TokenType.DataDictionary:
+                        obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                            key.ToString() + " {" + value.DataDictionary.Count + "} ";
+                        initializeHierarchy(value.DataDictionary, obj, currentDepth + 1);
+                        break;
+                    default:
+                        obj.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                            key.ToString() + ": " + value.ToString();
+                        break;
+                }
+
+                obj.name = key.ToString();
+
+                int index = System.Array.IndexOf(keys, key);
             }
-
-            obj.name = key.ToString();
-
-            int index = System.Array.IndexOf(keys, key);
         }
-    }
 
-    void SetJson(string jsonIN)
-    {
-        DataToken jsonDataToken;
-        bool success = VRCJson.TryDeserializeFromJson(jsonIN, out jsonDataToken);
-        if (success)
+        void SetJson(string jsonIN)
         {
-            json = jsonDataToken.DataDictionary;
+            DataToken jsonDataToken;
+            bool success = VRCJson.TryDeserializeFromJson(jsonIN, out jsonDataToken);
+            if (success)
+            {
+                json = jsonDataToken.DataDictionary;
+            }
+            else
+            {
+                Debug.LogError("Failed to deserialize JSON");
+            }
         }
-        else
-        {
-            Debug.LogError("Failed to deserialize JSON");
-        }
-    }
 
-    void SetJson(TextAsset textAsset)
-    {
-        SetJson(textAsset.text);
+        void SetJson(TextAsset textAsset)
+        {
+            SetJson(textAsset.text);
+        }
     }
 }

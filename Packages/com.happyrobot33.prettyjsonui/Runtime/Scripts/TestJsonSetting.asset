@@ -21,7 +21,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: 4126874211101056233
+  scriptID: 8284722740067774462
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: JSONManager, com.happyrobot33.jsonviewer
+      Data: HappysTools.PrettyJSONUI.JSONManager, com.happyrobot33.jsonviewer
     - Name: 
       Entry: 8
       Data: 

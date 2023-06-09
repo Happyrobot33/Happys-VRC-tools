@@ -1,7 +1,7 @@
 {
   "name": "com.happyrobot33.shaderfinder",
   "displayName": "Shader Finder",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "unity": "2019.4",
   "description": "A tool to find shaders in your project, so you can figure out why the VRC SDK wont let you upload your quest avatar",
   "author": {
