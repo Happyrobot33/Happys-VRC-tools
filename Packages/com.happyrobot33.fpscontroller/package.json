@@ -1,0 +1,11 @@
+{
+    "name": "com.happyrobot33.fpscontroller",
+    "displayName": "FPS Controller",
+    "version": "1.0.0",
+    "unity": "2019.4",
+    "description": "Adds a tool to control the FPS of the Unity Editor, allowing you to test things at different framerates.",
+    "author": {
+      "name": "Happyrobot33"
+    }
+  }
+  
