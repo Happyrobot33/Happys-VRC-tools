@@ -58,3 +58,52 @@ This is a small UI helper element that will display JSON in a dropdown like form
 
 This is a editor utility that will automatically create a light probe group and add light probe points to all relevant static game objects, along with adding points for spot, point and area lights. This is a improved version of [alexismorin's Light Probe Populator](https://github.com/alexismorin/Light-Probe-Populator), which took a slightly more primitive approach. You will find the control window in the VRC Packages tab in unity.
 </details>
+<details>
+<summary>FPS Controller</summary>
+
+This is a editor utility that allows for setting the FPS of the Unity editor, along with also setting the fixed delta time. This is useful for testing physics based things in the editor, as the default fixed delta time is not consistent with the VRC Client, as the VRC Client sets the fixed delta time to the Hz of the headset you are using. You will find the control window in the VRC Packages tab in unity. Presets for common headsets are included, but you can also set a custom FPS and fixed delta time.
+<details>
+<summary>Presets</summary>
+
+- Oculus Rift
+    - Hz: 90
+- Oculus Rift S
+    - Hz: 80
+- Oculus Quest
+    - Hz: 72
+- Oculus Quest Pro
+    - Hz: 90
+- Oculus Quest 2 72Hz
+    - Hz: 72
+- Oculus Quest 2 90Hz
+    - Hz: 90
+- Oculus Quest 2 120Hz
+    - Hz: 120
+- HTC Vive
+    - Hz: 90
+- HTC Vive Pro
+    - Hz: 90
+- HTC Vive Pro 2
+    - Hz: 120
+- HTC Vive Cosmos
+    - Hz: 90
+- Valve Index 120Hz
+    - Hz: 120
+- Valve Index 144Hz
+    - Hz: 144
+- Windows Mixed Reality 60Hz
+    - Hz: 60
+- Windows Mixed Reality 90Hz
+    - Hz: 90
+- Pimax 5K
+    - Hz: 90
+- Pimax 8K
+    - Hz: 80
+- Pico 4 72Hz
+    - Hz: 72
+- Pico 4 90Hz
+    - Hz: 90
+- Pico 4 Pro
+    - Hz: 90
+</details>
+</details>
