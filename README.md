@@ -107,3 +107,8 @@ This is a editor utility that allows for setting the FPS of the Unity editor, al
     - Hz: 90
 </details>
 </details>
+<details>
+<summary>GUID Regenerator</summary>
+
+This is a editor utility that will automatically regenerate the GUID's for an entire projects asset folder. This is useful if you have a avatar base edit that you want to import into an existing project without modifying the original base files. KEEP IN MIND THIS APPLYS TO THE ENTIRE PROJECT IT IS RUN IN!!!!!
+</details>

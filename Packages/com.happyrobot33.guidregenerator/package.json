@@ -1,0 +1,15 @@
+{
+    "name": "com.happyrobot33.guidregenerator",
+    "displayName": "GUID Regenerator",
+    "version": "1.0.0",
+    "unity": "2019.4",
+    "description": "This package provides a way to regenerate the GUID's of your entire assets folder of your project",
+    "author": {
+      "name": "Happyrobot33"
+    },
+    "vpmDependencies": {
+    },
+    "dependencies": {
+    }
+  }
+  

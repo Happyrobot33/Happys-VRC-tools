@@ -12,6 +12,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.happyrobot33.guidregenerator": {
+      "version": "file:com.happyrobot33.guidregenerator",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.happyrobot33.inspectortweaks": {
       "version": "file:com.happyrobot33.inspectortweaks",
       "depth": 0,
@@ -109,7 +115,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "2.0.2",
+      "version": "3.0.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -186,7 +192,7 @@
       "dependencies": {
         "com.unity.burst": "1.4.11",
         "com.unity.mathematics": "1.2.5",
-        "com.unity.nuget.newtonsoft-json": "2.0.2"
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
       }
     },
     "com.vrchat.clientsim": {
@@ -221,6 +227,24 @@
         "com.unity.postprocessing": "3.1.1",
         "com.unity.textmeshpro": "2.1.6"
       }
+    },
+    "net.koyashiro.udondictionary": {
+      "version": "file:net.koyashiro.udondictionary",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "net.koyashiro.udonjson": {
+      "version": "file:net.koyashiro.udonjson",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "net.koyashiro.udonlist": {
+      "version": "file:net.koyashiro.udonlist",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
