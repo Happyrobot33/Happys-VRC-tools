@@ -1,6 +1,8 @@
 {
     "name": "com.happyrobot33.shaderfinder.editor",
-    "references": [],
+    "references": [
+        "GUID:2bafac87e7f4b9b418d9448d219b01ab"
+    ],
     "includePlatforms": [
         "Editor"
     ],
