@@ -1,4 +1,5 @@
-﻿using UdonSharp;
+﻿#if UDONSHARP
+using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -217,3 +218,4 @@ public class JSONManagerInspector : Editor {
         }
     }
 }
+#endif

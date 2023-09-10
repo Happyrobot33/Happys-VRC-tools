@@ -1,4 +1,5 @@
-﻿using UdonSharp;
+﻿#if UDONSHARP
+using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -107,3 +108,4 @@ namespace HappysTools.PrettyJSONUI
         }
     }
 }
+#endif

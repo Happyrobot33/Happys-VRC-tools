@@ -1,0 +1,21 @@
+{
+    "name": "com.happyrobot33.avatarbulkuploader",
+    "references": [
+        "GUID:5718fb738711cd34ea54e9553040911d",
+        "GUID:3456780c4fb2d324ab9c633d6f1b0ddb",
+        "GUID:21332e1f0d937794d916d2402ba1943a",
+        "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05",
+        "GUID:b906909fcc54f634db50f2cad0f988d9"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
