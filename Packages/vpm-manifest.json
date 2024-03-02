@@ -3,23 +3,26 @@
     "com.vrchat.core.vpm-resolver": {
       "version": "0.1.18"
     },
+    "com.vrchat.base": {
+      "version": "3.4.2"
+    },
     "com.vrchat.avatars": {
-      "version": "3.3.0-beta.1"
+      "version": "3.4.2"
     }
   },
   "locked": {
-    "com.vrchat.base": {
-      "version": "3.3.0-beta.1",
-      "dependencies": {}
-    },
     "com.vrchat.core.vpm-resolver": {
       "version": "0.1.18",
       "dependencies": {}
     },
+    "com.vrchat.base": {
+      "version": "3.4.2",
+      "dependencies": {}
+    },
     "com.vrchat.avatars": {
-      "version": "3.3.0-beta.1",
+      "version": "3.4.2",
       "dependencies": {
-        "com.vrchat.base": "3.3.0-beta.1"
+        "com.vrchat.base": "3.4.2"
       }
     }
   }

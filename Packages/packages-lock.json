@@ -6,6 +6,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.happyrobot33.buildsizeviewer": {
+      "version": "file:com.happyrobot33.buildsizeviewer",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.happyrobot33.editorgames": {
       "version": "file:com.happyrobot33.editorgames",
       "depth": 0,
@@ -82,7 +88,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.11",
+      "version": "2.0.22",
       "depth": 0,
       "source": "registry",
       "dependencies": {

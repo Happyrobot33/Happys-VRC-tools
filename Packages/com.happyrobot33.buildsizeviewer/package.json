@@ -1,0 +1,15 @@
+{
+    "name": "com.happyrobot33.buildsizeviewer",
+    "displayName": "VRChat Build Size Viewer",
+    "version": "1.0.0",
+    "unity": "2019.4",
+    "description": "A system for viewing the build size for VRC worlds and avatars after building.",
+    "author": {
+      "name": "Happyrobot33"
+    },
+    "vpmDependencies": {
+    },
+    "dependencies": {
+    }
+  }
+  
