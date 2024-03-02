@@ -112,3 +112,8 @@ This is a editor utility that allows for setting the FPS of the Unity editor, al
 
 This is a editor utility that will automatically regenerate the GUID's for an entire projects asset folder. This is useful if you have a avatar base edit that you want to import into an existing project without modifying the original base files. KEEP IN MIND THIS APPLYS TO THE ENTIRE PROJECT IT IS RUN IN!!!!!
 </details>
+<details>
+<summary>VRChat Build Size Viewer</summary>
+
+Originally forked from [VRChat Build Size Viewer](https://github.com/MunifiSense/VRChat-Build-Size-Viewer) with permission from Munifi themselves to include it in this repository and make improvements to it.
+</details>
