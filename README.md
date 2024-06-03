@@ -117,3 +117,8 @@ This is a editor utility that will automatically regenerate the GUID's for an en
 
 Originally forked from [VRChat Build Size Viewer](https://github.com/MunifiSense/VRChat-Build-Size-Viewer) with permission from Munifi themselves to include it in this repository and make improvements to it.
 </details>
+<details>
+<summary>Atlas Generator</summary>
+
+Automatically generate atlas textures from a set of source textures, and keep it updated anytime the source textures change. Create the definition under the assets creation menu and then add the source textures to the list.
+</details>
