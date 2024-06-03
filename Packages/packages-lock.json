@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.happyrobot33.atlasgenerator": {
+      "version": "file:com.happyrobot33.atlasgenerator",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.happyrobot33.avatarbulkuploader": {
       "version": "file:com.happyrobot33.avatarbulkuploader",
       "depth": 0,
