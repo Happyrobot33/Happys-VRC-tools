@@ -1,7 +1,7 @@
 # Welcome to my VRC Tools repository!
 This repo is to store a bunch of different tools ive written to do different things. Here is the VCC listing for the repo [Happys VRC Tools](https://www.matthewherber.com/Happys-VRC-tools/)
 
-All of these tools are located under the VRC Packages tab
+All of these tools are located under the VRC Packages tab either at the top of the editor or in the asset creation menu in the assets window
 
 ## Package Information
 <details>
