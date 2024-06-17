@@ -74,7 +74,9 @@ namespace HappysTools.PackageWindowConsolidator
 
     public class PackageWindowConsolidator : MonoBehaviour
     {
-        [MenuItem("VRC Packages/Consolidate Packages", false, -1000)]
+        private const string NewDropdownName = "VRC Packages";
+
+        [MenuItem(NewDropdownName + "/Consolidate Packages", false, -1000)]
         public static void ConsolidatePackages()
         {
             string currentWorkingPackage = "";
@@ -179,6 +181,17 @@ namespace HappysTools.PackageWindowConsolidator
                                     variableName.IndexOf(")]")
                                 );
 
+                                //check if there is parameters
+                                if (variableName.Contains(","))
+                                {
+                                    variableName = variableName.Substring(
+                                        0,
+                                        variableName.IndexOf(",")
+                                    );
+                                }
+
+                                Debug.Log(variableName);
+
                                 string resolvedPath = "";
 
                                 //find the variable in the file
@@ -193,32 +206,48 @@ namespace HappysTools.PackageWindowConsolidator
                                                 + variableName.Length
                                                 + 3
                                         );
+                                        Debug.Log(variableValue);
 
-                                        //remove the quotes and semicolon
+                                        //check if its already updated
+                                        if (variableValue.Contains(NewDropdownName + "/"))
+                                        {
+                                            continue;
+                                        }
+
+                                        string cleanedVariableValue = variableValue;
+
+                                        //check if the value has either Tools or Window in it
+                                        if (variableValue.StartsWith("\"Tools/") || variableValue.StartsWith("\"Window/"))
+                                        {
+                                            //remove the initial Tools/ or Window/
+                                            cleanedVariableValue = variableValue.Substring(
+                                                variableValue.IndexOf("/") + 1
+                                            );
+
+                                            cleanedVariableValue = "\"" + cleanedVariableValue;
+                                        }
+
+                                        Debug.Log(cleanedVariableValue);
+
+                                        /* //remove the quotes and semicolon
                                         resolvedPath = variableValue
                                             .Replace("\"", "")
-                                            .Replace(";", "");
+                                            .Replace(";", ""); */
+
+                                        //update the value of the variable
+                                        string newVariableValue = string.Format("\"{0}/\" + {1}", NewDropdownName, cleanedVariableValue);
+                                        Debug.Log(newVariableValue);
+                                        File.WriteAllText(
+                                            file,
+                                            File.ReadAllText(file).Replace(variableLine, variableLine.Replace(variableValue, newVariableValue))
+                                        );
+
+                                        //reimport the file
+                                        AssetDatabase.ImportAsset(file);
+
+                                        //read the file again
+                                        lines = File.ReadAllLines(file);
                                     }
-                                }
-
-                                //if the path was resolved
-                                if (resolvedPath != "")
-                                {
-                                    //replace the variable with the resolved path
-                                    File.WriteAllText(
-                                        file,
-                                        File.ReadAllText(file)
-                                            .Replace(
-                                                "[MenuItem(" + variableName + ")]",
-                                                "[MenuItem(\"" + resolvedPath + "\")]"
-                                            )
-                                    );
-
-                                    //reimport the file
-                                    AssetDatabase.ImportAsset(file);
-
-                                    //read the file again
-                                    lines = File.ReadAllLines(file);
                                 }
                             }
                         }
@@ -227,7 +256,7 @@ namespace HappysTools.PackageWindowConsolidator
                         foreach (string line in lines)
                         {
                             //if the line contains a MenuItem attribute and isnt already in the VRC Packages dropdown
-                            if (line.Contains("[MenuItem") && !line.Contains("VRC Packages"))
+                            if (line.Contains("[MenuItem") && !line.Contains(NewDropdownName))
                             {
                                 //replace the Window/ with VRC Packages/
                                 if (line.Contains("[MenuItem(\"Window/"))
@@ -237,7 +266,7 @@ namespace HappysTools.PackageWindowConsolidator
                                         File.ReadAllText(file)
                                             .Replace(
                                                 "[MenuItem(\"Window/",
-                                                "[MenuItem(\"VRC Packages/"
+                                                "[MenuItem(\"" + NewDropdownName + "/"
                                             )
                                     );
                                 }
@@ -248,18 +277,24 @@ namespace HappysTools.PackageWindowConsolidator
                                         File.ReadAllText(file)
                                             .Replace(
                                                 "[MenuItem(\"Tools/",
-                                                "[MenuItem(\"VRC Packages/"
+                                                "[MenuItem(\"" + NewDropdownName + "/"
                                             )
                                     );
                                 }
                                 else if (IsMenuItemMovable(line)) //make sure the menu item is not in some of the other dropdowns
                                 {
+                                    Debug.Log(line);
+                                    //check if it is a variable
+                                    if (!line.Contains("MenuItem(\")"))
+                                    {
+                                        continue;
+                                    }
                                     //get the path of the MenuItem
                                     string path = line.Substring(line.IndexOf("\"") + 1);
                                     path = path.Substring(0, path.IndexOf("\""));
 
                                     //add the package name to the path
-                                    path = "VRC Packages/" + path;
+                                    path = NewDropdownName + "/" + path;
 
                                     //replace the path in the line
                                     string newLine = line.Replace(
@@ -339,7 +374,7 @@ namespace HappysTools.PackageWindowConsolidator
                     containsMenuItem = true;
                 }
 
-                if (line.Contains("[MenuItem(\"VRC Packages/"))
+                if (line.Contains("[MenuItem(\"" + NewDropdownName + "/"))
                 {
                     return true;
                 }
@@ -355,7 +390,7 @@ namespace HappysTools.PackageWindowConsolidator
         }
 
         //adds the ability to clear the session preference to always consolidate packages
-        [MenuItem("VRC Packages/Disable Automatic Consolidation", false, -1000)]
+        [MenuItem(NewDropdownName + "/Disable Automatic Consolidation", false, -1000)]
         public static void DisableAutomaticConsolidation()
         {
             SessionState.SetBool("PackageWindowConsolidator.ConsolidatePackages", false);
