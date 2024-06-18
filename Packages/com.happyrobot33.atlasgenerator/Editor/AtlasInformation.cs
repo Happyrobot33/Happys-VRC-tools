@@ -5,15 +5,29 @@ using UnityEditor;
 using System.IO;
 using UnityEditor.VersionControl;
 using UnityEngine.UI;
+using UnityEngine.Profiling;
 
 namespace HappysTools.AtlasGenerator
 {
     [CreateAssetMenu(fileName = "AtlasInformation", menuName = "VRC Packages/Atlas Generator/Atlas Definition")]
     public class AtlasInformation : ScriptableObject
     {
+        /// <summary>
+        /// The textures to include in the atlas
+        /// </summary>
         public List<Texture2D> Textures;
+        /// <summary>
+        /// The grid size of the atlas
+        /// </summary>
         public Vector2Int Grid;
+        /// <summary>
+        /// The generated texture
+        /// </summary>
         public Texture2D GeneratedTexture;
+        /// <summary>
+        /// The background color of the atlas
+        /// </summary>
+        public Color BackgroundColor = Color.black;
 
         public Vector2Int AtlasSize
         {
@@ -74,6 +88,9 @@ namespace HappysTools.AtlasGenerator
             AssetDatabase.CreateAsset(atlasInformation, newAssetPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+
+            //immediately rebuild
+            atlasInformation.Rebuild();
         }
 
         [MenuItem("Assets/Create/VRC Packages/Atlas Generator/Create Atlas From Selected Textures", true)]
@@ -137,9 +154,11 @@ namespace HappysTools.AtlasGenerator
 
         public void Rebuild()
         {
+            Profiler.BeginSample(nameof(Rebuild));
             Debug.Log("Rebuilding atlas: " + name);
 
             //ensure the textures are readable
+            Profiler.BeginSample("Ensure Textures Readable");
             foreach (Texture2D texture in Textures)
             {
                 //check if its valid
@@ -160,17 +179,21 @@ namespace HappysTools.AtlasGenerator
                     AssetDatabase.ImportAsset(assetPath);
                 }
             }
+            Profiler.EndSample();
 
             Texture2D atlas = new Texture2D(AtlasSize.x, AtlasSize.y);
             //make the default color black
-            for (int y = 0; y < atlas.height; y++)
+            Profiler.BeginSample("Clear Texture");
+            Color[] fillColorArray = atlas.GetPixels();
+            for (int i = 0; i < fillColorArray.Length; i++)
             {
-                for (int x = 0; x < atlas.width; x++)
-                {
-                    atlas.SetPixel(x, y, Color.black);
-                }
+                fillColorArray[i] = BackgroundColor;
             }
+            atlas.SetPixels(fillColorArray);
+            Profiler.EndSample();
 
+            //loop through all the textures
+            Profiler.BeginSample("Blit Textures");
             for (int y = 0; y < Grid.y; y++)
             {
                 for (int x = 0; x < Grid.x; x++)
@@ -196,9 +219,14 @@ namespace HappysTools.AtlasGenerator
                 }
             }
             atlas.Apply();
+            Profiler.EndSample();
+
+            //refresh the database
+            AssetDatabase.Refresh();
 
             //GENERATION PROCESSING
             UpdateTexture(atlas);
+            Profiler.EndSample();
         }
 
         private Texture2D GetTexture(int y, int x)
@@ -295,6 +323,16 @@ namespace HappysTools.AtlasGenerator
             //get a rectangle to draw the images in
             Rect rect = GUILayoutUtility.GetAspectRect(aspectRatio);
 
+            //create a blank 1x1 texture that is the background color
+            Texture2D backgroundTexture = new Texture2D(1, 1);
+            backgroundTexture.SetPixel(0, 0, atlasInformation.BackgroundColor);
+            backgroundTexture.Apply();
+            GUIStyle backgroundImageStyle = new GUIStyle(GUI.skin.box);
+            backgroundImageStyle.normal.background = backgroundTexture;
+            backgroundImageStyle.alignment = TextAnchor.MiddleCenter;
+            backgroundImageStyle.padding = new RectOffset(0, 0, 0, 0);
+            backgroundImageStyle.margin = new RectOffset(0, 0, 0, 0);
+
             //split out the rectangle into the grid
             for (int y = 0; y < atlasInformation.Grid.y; y++)
             {
@@ -308,6 +346,10 @@ namespace HappysTools.AtlasGenerator
                     {
                         GUI.Box(imageRect, atlasInformation.Textures[y * atlasInformation.Grid.x + x], imageStyle);
                     }
+                    else
+                    {
+                        GUI.Box(imageRect, "", backgroundImageStyle);
+                    }
                 }
             }
 
@@ -315,6 +357,26 @@ namespace HappysTools.AtlasGenerator
             if (GUILayout.Button("Force Rebuild Atlas"))
             {
                 atlasInformation.Rebuild();
+            }
+        }
+
+        public void OnDisable()
+        {
+            //get the atlas information
+            AtlasInformation atlasInformation = (AtlasInformation)target;
+
+            //check if dirty
+            if (EditorUtility.IsDirty(atlasInformation))
+            {
+                //ask the user if they want to rebuild the atlas
+                if (EditorUtility.DisplayDialog("Rebuild Atlas", "The atlas information has been modified. Would you like to rebuild the atlas?", "Yes", "No"))
+                {
+                    //rebuild the atlas
+                    atlasInformation.Rebuild();
+                }
+
+                //save the asset to clear the dirty flag
+                EditorUtility.ClearDirty(atlasInformation);
             }
         }
     }
