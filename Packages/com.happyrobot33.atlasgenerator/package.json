@@ -1,7 +1,7 @@
 {
     "name": "com.happyrobot33.atlasgenerator",
     "displayName": "Atlas Generator",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "unity": "2019.4",
     "description": "This package provides a system to automatically generate atlases upon texture changes",
     "author": {
