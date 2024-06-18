@@ -17,5 +17,6 @@ MonoBehaviour:
   - {fileID: 2800000, guid: e49062128527d9047ba892cf0a227fa3, type: 3}
   - {fileID: 2800000, guid: 024b4555f471373448d6c16488099765, type: 3}
   - {fileID: 2800000, guid: bdf9b8da09ed18043ad08f05a9860585, type: 3}
-  Grid: {x: 2, y: 2}
-  GeneratedTexture: {fileID: 0}
+  Grid: {x: 3, y: 2}
+  GeneratedTexture: {fileID: 2800000, guid: ec50d4abb646a814cbe804b4ed1da9ab, type: 3}
+  BackgroundColor: {r: 0, g: 0, b: 0, a: 1}

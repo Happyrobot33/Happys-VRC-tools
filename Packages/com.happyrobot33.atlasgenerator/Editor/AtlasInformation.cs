@@ -373,10 +373,10 @@ namespace HappysTools.AtlasGenerator
                 {
                     //rebuild the atlas
                     atlasInformation.Rebuild();
-                }
 
-                //save the asset to clear the dirty flag
-                EditorUtility.ClearDirty(atlasInformation);
+                    //save the changes
+                    AssetDatabase.SaveAssets();
+                }
             }
         }
     }
