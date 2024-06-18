@@ -45,6 +45,11 @@ namespace HappysTools.AtlasGenerator
                 int maxSize = 0;
                 foreach (Texture2D texture in Textures)
                 {
+                    if (texture == null)
+                    {
+                        continue;
+                    }
+
                     if (texture.width > maxSize)
                     {
                         maxSize = texture.width;
@@ -184,12 +189,11 @@ namespace HappysTools.AtlasGenerator
             Texture2D atlas = new Texture2D(AtlasSize.x, AtlasSize.y);
             //make the default color black
             Profiler.BeginSample("Clear Texture");
-            Color[] fillColorArray = atlas.GetPixels();
+            var fillColorArray = atlas.GetPixelData<Color>(0);
             for (int i = 0; i < fillColorArray.Length; i++)
             {
                 fillColorArray[i] = BackgroundColor;
             }
-            atlas.SetPixels(fillColorArray);
             Profiler.EndSample();
 
             //loop through all the textures
@@ -297,12 +301,31 @@ namespace HappysTools.AtlasGenerator
         {
             AtlasInformation atlasInformation = (AtlasInformation)target;
 
+            //make sure the list is the total size of the grid
+            if (atlasInformation.Textures.Count != atlasInformation.Grid.x * atlasInformation.Grid.y)
+            {
+                //expand or contract the list, keeping the existing elements if expanding
+                while (atlasInformation.Textures.Count < atlasInformation.Grid.x * atlasInformation.Grid.y)
+                {
+                    atlasInformation.Textures.Add(null);
+                }
+                while (atlasInformation.Textures.Count > atlasInformation.Grid.x * atlasInformation.Grid.y)
+                {
+                    atlasInformation.Textures.RemoveAt(atlasInformation.Textures.Count - 1);
+                }
+            }
+
             //draw the default inspector
             DrawDefaultInspector();
 
             //display the total size of the atlas
             EditorGUILayout.LabelField("Total Raw Size", string.Format("{0}x{1}", atlasInformation.AtlasSize.x, atlasInformation.AtlasSize.y));
 
+            //if the resulting texture2d will be too large, display a warning
+            if (atlasInformation.AtlasSize.x > SystemInfo.maxTextureSize || atlasInformation.AtlasSize.y > SystemInfo.maxTextureSize)
+            {
+                EditorGUILayout.HelpBox(string.Format("The resulting atlas will be too large for Unity to handle. You will receive an error when trying to generate this atlas. Please reduce the size of the atlas until the total size is under {0}x{0}", SystemInfo.maxTextureSize), MessageType.Error);
+            }
 
             //draw the textures in the grid
             GUIStyle imageStyle = new GUIStyle(GUI.skin.box);
@@ -321,7 +344,8 @@ namespace HappysTools.AtlasGenerator
             }
 
             //get a rectangle to draw the images in
-            Rect rect = GUILayoutUtility.GetAspectRect(aspectRatio);
+            Rect inputRect = GUILayoutUtility.GetAspectRect(aspectRatio);
+            Rect previewRect = GUILayoutUtility.GetAspectRect(aspectRatio);
 
             //create a blank 1x1 texture that is the background color
             Texture2D backgroundTexture = new Texture2D(1, 1);
@@ -334,15 +358,39 @@ namespace HappysTools.AtlasGenerator
             backgroundImageStyle.margin = new RectOffset(0, 0, 0, 0);
 
             //split out the rectangle into the grid
+            #region Input
+            EditorGUI.BeginChangeCheck();
             for (int y = 0; y < atlasInformation.Grid.y; y++)
             {
                 for (int x = 0; x < atlasInformation.Grid.x; x++)
                 {
                     //calculate the position of the image
-                    Rect imageRect = new Rect(rect.x + x * rect.width / atlasInformation.Grid.x, rect.y + y * rect.height / atlasInformation.Grid.y, rect.width / atlasInformation.Grid.x, rect.height / atlasInformation.Grid.y);
+                    Rect imageRect = new Rect(inputRect.x + x * inputRect.width / atlasInformation.Grid.x, inputRect.y + y * inputRect.height / atlasInformation.Grid.y, inputRect.width / atlasInformation.Grid.x, inputRect.height / atlasInformation.Grid.y);
 
                     //draw the image
                     if (atlasInformation.Textures.Count > y * atlasInformation.Grid.x + x)
+                    {
+                        atlasInformation.Textures[y * atlasInformation.Grid.x + x] = (Texture2D)EditorGUI.ObjectField(imageRect, atlasInformation.Textures[y * atlasInformation.Grid.x + x], typeof(Texture2D), false);
+                    }
+                }
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //save the changes
+                EditorUtility.SetDirty(atlasInformation);
+            }
+            #endregion
+            
+            #region Raw Preview
+            for (int y = 0; y < atlasInformation.Grid.y; y++)
+            {
+                for (int x = 0; x < atlasInformation.Grid.x; x++)
+                {
+                    //calculate the position of the image
+                    Rect imageRect = new Rect(previewRect.x + x * previewRect.width / atlasInformation.Grid.x, previewRect.y + y * previewRect.height / atlasInformation.Grid.y, previewRect.width / atlasInformation.Grid.x, previewRect.height / atlasInformation.Grid.y);
+
+                    //draw the image
+                    if (atlasInformation.Textures.Count > y * atlasInformation.Grid.x + x && atlasInformation.Textures[y * atlasInformation.Grid.x + x] != null)
                     {
                         GUI.Box(imageRect, atlasInformation.Textures[y * atlasInformation.Grid.x + x], imageStyle);
                     }
@@ -352,6 +400,7 @@ namespace HappysTools.AtlasGenerator
                     }
                 }
             }
+            #endregion
 
             //add a button to rebuild the atlas
             if (GUILayout.Button("Force Rebuild Atlas"))
