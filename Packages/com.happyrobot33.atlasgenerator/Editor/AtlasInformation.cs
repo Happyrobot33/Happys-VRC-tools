@@ -301,6 +301,12 @@ namespace HappysTools.AtlasGenerator
         {
             AtlasInformation atlasInformation = (AtlasInformation)target;
 
+            //make sure the textuers list is not null
+            if (atlasInformation.Textures == null)
+            {
+                atlasInformation.Textures = new List<Texture2D>();
+            }
+
             //make sure the list is the total size of the grid
             if (atlasInformation.Textures.Count != atlasInformation.Grid.x * atlasInformation.Grid.y)
             {
