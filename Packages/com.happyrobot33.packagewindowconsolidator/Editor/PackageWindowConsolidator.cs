@@ -190,7 +190,7 @@ namespace HappysTools.PackageWindowConsolidator
                                     );
                                 }
 
-                                Debug.Log(variableName);
+                                //Debug.Log(variableName);
 
                                 string resolvedPath = "";
 
@@ -206,7 +206,7 @@ namespace HappysTools.PackageWindowConsolidator
                                                 + variableName.Length
                                                 + 3
                                         );
-                                        Debug.Log(variableValue);
+                                        //Debug.Log(variableValue);
 
                                         //check if its already updated
                                         if (variableValue.Contains(NewDropdownName + "/"))
@@ -227,7 +227,7 @@ namespace HappysTools.PackageWindowConsolidator
                                             cleanedVariableValue = "\"" + cleanedVariableValue;
                                         }
 
-                                        Debug.Log(cleanedVariableValue);
+                                        //Debug.Log(cleanedVariableValue);
 
                                         /* //remove the quotes and semicolon
                                         resolvedPath = variableValue
@@ -236,7 +236,7 @@ namespace HappysTools.PackageWindowConsolidator
 
                                         //update the value of the variable
                                         string newVariableValue = string.Format("\"{0}/\" + {1}", NewDropdownName, cleanedVariableValue);
-                                        Debug.Log(newVariableValue);
+                                        //Debug.Log(newVariableValue);
                                         File.WriteAllText(
                                             file,
                                             File.ReadAllText(file).Replace(variableLine, variableLine.Replace(variableValue, newVariableValue))
@@ -283,7 +283,7 @@ namespace HappysTools.PackageWindowConsolidator
                                 }
                                 else if (IsMenuItemMovable(line)) //make sure the menu item is not in some of the other dropdowns
                                 {
-                                    Debug.Log(line);
+                                    //Debug.Log(line);
                                     //check if it is a variable
                                     if (!line.Contains("MenuItem(\")"))
                                     {
