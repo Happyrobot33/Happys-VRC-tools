@@ -189,7 +189,7 @@ namespace HappysTools.AtlasGenerator
             Texture2D atlas = new Texture2D(AtlasSize.x, AtlasSize.y);
             //make the default color black
             Profiler.BeginSample("Clear Texture");
-            var fillColorArray = atlas.GetPixelData<Color>(0);
+            var fillColorArray = atlas.GetPixelData<Color32>(0);
             for (int i = 0; i < fillColorArray.Length; i++)
             {
                 fillColorArray[i] = BackgroundColor;
