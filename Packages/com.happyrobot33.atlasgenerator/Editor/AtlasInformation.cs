@@ -211,8 +211,20 @@ namespace HappysTools.AtlasGenerator
                         continue;
                     }
 
-                    RenderTexture rt = RenderTexture.GetTemporary(MaxTextureSize.x, MaxTextureSize.y);
-                    Graphics.Blit(texture, rt);
+                    RenderTexture rt = null;
+                    //we want to swizzle the colors if it is a normal map
+                    TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
+                    if (importer.textureType == TextureImporterType.NormalMap)
+                    {
+                        rt = RenderTexture.GetTemporary(MaxTextureSize.x, MaxTextureSize.y, 0, RenderTextureFormat.Default, readWrite: RenderTextureReadWrite.Linear);
+                        Material mat = GetUnpackNormalMaterial();
+                        Graphics.Blit(texture, rt, mat);
+                    }
+                    else
+                    {
+                        rt = RenderTexture.GetTemporary(MaxTextureSize.x, MaxTextureSize.y);
+                        Graphics.Blit(texture, rt);
+                    }
                     RenderTexture active = RenderTexture.active;
                     RenderTexture.active = rt;
 
@@ -231,6 +243,14 @@ namespace HappysTools.AtlasGenerator
             //GENERATION PROCESSING
             UpdateTexture(atlas);
             Profiler.EndSample();
+        }
+
+        public static Material GetUnpackNormalMaterial()
+        {
+            Shader shader = Shader.Find("Hidden/AtlasGenerator/UnpackNormal");
+            //create a material with this shader
+            Material mat = new Material(shader);
+            return mat;
         }
 
         private Texture2D GetTexture(int y, int x)
@@ -386,7 +406,7 @@ namespace HappysTools.AtlasGenerator
                 EditorUtility.SetDirty(atlasInformation);
             }
             #endregion
-            
+
             #region Raw Preview
             for (int y = 0; y < atlasInformation.Grid.y; y++)
             {
@@ -398,7 +418,33 @@ namespace HappysTools.AtlasGenerator
                     //draw the image
                     if (atlasInformation.Textures.Count > y * atlasInformation.Grid.x + x && atlasInformation.Textures[y * atlasInformation.Grid.x + x] != null)
                     {
-                        GUI.Box(imageRect, atlasInformation.Textures[y * atlasInformation.Grid.x + x], imageStyle);
+                        Texture2D texture = atlasInformation.Textures[y * atlasInformation.Grid.x + x];
+                        TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
+                        if (importer.textureType == TextureImporterType.NormalMap)
+                        {
+                            //set the texture
+                            Material mat = AtlasInformation.GetUnpackNormalMaterial();
+                            mat.mainTexture = texture;
+                            GL.PushMatrix();
+                            mat.SetPass(0);
+
+                            GL.Begin(GL.QUADS);
+                            GL.Color(Color.white);
+                            GL.TexCoord2(0, 0);
+                            GL.Vertex3(imageRect.x, imageRect.y + imageRect.height, 0);
+                            GL.TexCoord2(0, 1);
+                            GL.Vertex3(imageRect.x, imageRect.y, 0);
+                            GL.TexCoord2(1, 1);
+                            GL.Vertex3(imageRect.x + imageRect.width, imageRect.y, 0);
+                            GL.TexCoord2(1, 0);
+                            GL.Vertex3(imageRect.x + imageRect.width, imageRect.y + imageRect.height, 0);
+                            GL.End();
+                            GL.PopMatrix();
+                        }
+                        else
+                        {
+                            GUI.Box(imageRect, texture, imageStyle);
+                        }
                     }
                     else
                     {
