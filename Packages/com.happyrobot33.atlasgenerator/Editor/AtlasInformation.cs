@@ -157,6 +157,28 @@ namespace HappysTools.AtlasGenerator
             GeneratedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(newAssetPath);
         }
 
+        /// <summary>
+        /// Shuffles all texture slot assignments randomly
+        /// </summary>
+        public void ShuffleTextures()
+        {
+            // Create a random number generator
+            System.Random random = new System.Random();
+            
+            // Fisher-Yates shuffle algorithm
+            for (int i = Textures.Count - 1; i > 0; i--)
+            {
+                int randomIndex = random.Next(i + 1);
+                
+                // Swap
+                Texture2D temp = Textures[i];
+                Textures[i] = Textures[randomIndex];
+                Textures[randomIndex] = temp;
+            }
+            
+            Debug.Log("Shuffled texture slot assignments for atlas: " + name);
+        }
+
         public void Rebuild()
         {
             Profiler.BeginSample(nameof(Rebuild));
@@ -454,11 +476,18 @@ namespace HappysTools.AtlasGenerator
             }
             #endregion
 
-            //add a button to rebuild the atlas
+            //add buttons for atlas operations
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Shuffle Textures"))
+            {
+                atlasInformation.ShuffleTextures();
+                EditorUtility.SetDirty(atlasInformation);
+            }
             if (GUILayout.Button("Force Rebuild Atlas"))
             {
                 atlasInformation.Rebuild();
             }
+            EditorGUILayout.EndHorizontal();
         }
 
         public void OnDisable()
