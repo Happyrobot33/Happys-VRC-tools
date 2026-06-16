@@ -130,7 +130,7 @@ jobs:
       
       # Output for matrices workaround
       - name: Build Status
-        uses: cloudposse/github-action-matrix-outputs-write@0.3.1
+        uses: cloudposse/github-action-matrix-outputs-write@main
         with:
           matrix-step-name: ${{ github.job }}
           matrix-key: ${{ matrix.packageID }}
